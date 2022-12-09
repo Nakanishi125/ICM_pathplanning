@@ -61,7 +61,7 @@ void TaskSet::problemdef()
 	std::cout << std::endl;
 
 	int th_g1, th_g2, th_g3, th_g4, th_g5, th_g6;
-	std::cout << "Input initial state" << std::endl;
+	std::cout << "Input final state" << std::endl;
 	std::cout << "th1: ";	std::cin >> th_g1;
 	std::cout << "th2: ";	std::cin >> th_g2;
 	std::cout << "th3: ";	std::cin >> th_g3;

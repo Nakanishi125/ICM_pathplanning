@@ -41,7 +41,8 @@ int NeighborList::get(int i)
 	return list[i];
 }
 
-
+// make the array which starts with goal index and 
+// ends with start index
 std::vector<int> NeighborList::nodenum_order(int end)
 {
 	std::vector<int> ord;
@@ -117,66 +118,6 @@ std::vector<PointCloud> RRTNode::get_cfree_del()
 {
 	return cfree_del;
 }
-
-
-// Definition of Class RRTNodeList ========================
-//RRTNodeList::RRTNodeList()
-//	:graph() {}
-//
-//
-//RRTNodeList::RRTNodeList(Node ini)
-//	:graph()
-//{
-//	graph.push_back(RRTNode(ini));
-//}
-//
-//
-//int RRTNodeList::size()
-//{
-//	return (int)graph.size();
-//}
-//
-//
-//int RRTNodeList::get_nearest_index(Node targ)
-//{
-//	double dist = DBL_MAX;
-//	int index = -1;
-//	for (int i = 0; i < (int)(graph.size()); ++i)
-//	{
-//		double tmp = graph[i].distance(targ);
-//		if (dist > tmp) {
-//			index = i;
-//			dist = tmp;
-//		}
-//	}
-//
-//	return index;
-//}
-//
-//
-//void RRTNodeList::push(Node targ)
-//{
-//	graph.push_back(RRTNode(targ));
-//}
-//
-//
-//void RRTNodeList::push(RRTNode targ)
-//{
-//	graph.push_back(targ);
-//}
-//
-//
-//void RRTNodeList::pop()
-//{
-//	graph.pop_back();
-//}
-//
-//
-//RRTNode RRTNodeList::get(int i)
-//{
-//	if (i < 0)	i = (int)graph.size() + i;
-//	return graph[i];
-//}
 
 
 // Definition of Class RRTTree ========================
@@ -320,7 +261,8 @@ NodeList RRTTree::generate_path()
 	for (const auto& e : ord) {
 		path.push_back(graph[e].getNode());
 	}
-
+	
+	path.reverse();
 	return path;
 }
 

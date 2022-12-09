@@ -1,7 +1,4 @@
-﻿// ICM_MotionPlanning.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
-//#include "RRT.h"
-//#include "FormClosure.h"
-#include "TaskSet.h"
+﻿#include "TaskSet.h"
 #include "Visual.h"
 #include "RRT.h"
 #include "Problem.h"
@@ -16,29 +13,31 @@
 int main(int argc, char* argv[])
 {
     std::cout << "Welcome to Sensorless ICM planner!\n";
-    std::cout << "Setting       -> 1" << std::endl;
-    std::cout << "Generate Path(RRT) -> 2" << std::endl;
+    std::cout << "Setting                     -> 1" << std::endl;
+    std::cout << "Generate Path(RRT)          -> 2" << std::endl;
     std::cout << "Generate Path(Reverse RRT)  -> 3" << std::endl;
+    std::cout << "Generate Path(RRT-Connect)  -> 4" << std::endl;
     int i = 0;
     std::cout << ">";   std::cin >> i;
+	assert(i > 0 && i <= 4);
 
     if (i == 1) {
         TaskSet setting;
         setting.run();
     }
-    else if (i == 2) {
-		Problem* p = new Problem(new RRT);
-		p->pathplanning();
+	else{
+		Problem* p = nullptr;
+	    if (i == 2)	p = new Problem(new RRT);
+		if (i == 3) p = new Problem(new RevRRT);
+		if (i == 4) p = new Problem(new RRTConnect);
 
-		delete p;
-
-    }
-	else if(i == 3){
-		Problem* p = new Problem(new RevRRT);
-		p->pathplanning();
-
+		NodeList path = p->pathplanning();
+	
+		path.printIO();
 		delete p;
 	}
+
+		
 //    else if (i == 3) {
 //        //Node fin(18.8, -21.2, -24.3, 18.9, -14.8, -3);
 //        //Node fin(38.1, -39.2, -63.4, 25.7, -41.5, -41.4);
@@ -75,13 +74,3 @@ int main(int argc, char* argv[])
 
 }
 
-// プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー
-// プログラムのデバッグ: F5 または [デバッグ] > [デバッグの開始] メニュー
-
-// 作業を開始するためのヒント: 
-//    1. ソリューション エクスプローラー ウィンドウを使用してファイルを追加/管理します 
-//   2. チーム エクスプローラー ウィンドウを使用してソース管理に接続します
-//   3. 出力ウィンドウを使用して、ビルド出力とその他のメッセージを表示します
-//   4. エラー一覧ウィンドウを使用してエラーを表示します
-//   5. [プロジェクト] > [新しい項目の追加] と移動して新しいコード ファイルを作成するか、[プロジェクト] > [既存の項目の追加] と移動して既存のコード ファイルをプロジェクトに追加します
-//   6. 後ほどこのプロジェクトを再び開く場合、[ファイル] > [開く] > [プロジェクト] と移動して .sln ファイルを選択します

@@ -85,8 +85,11 @@ private:
 	GoalJudge goal_connect(RRTNode bef, RRTNode aft);
 	GoalJudge goal_gconf(std::vector<PointCloud> cfo);
 
-	NodeList generate_path(GoalJudge flag);
+	NodeList make_path(GoalJudge flag);
 	bool extend_limit(Node n1, Node n2);
+
+	NodeList path_concat();
+
 public:
 	RRTConnect();
 	NodeList plan(Node ini, Node fin, State3D goal);

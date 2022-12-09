@@ -50,26 +50,6 @@ struct RRTNode
 };
 
 
-//class RRTNodeList
-//{
-//private:
-//	std::vector<RRTNode> graph;
-//
-//public:
-//	RRTNodeList();
-//	RRTNodeList(Node ini);
-//	//RRTNodeList(std::vector<Node> old);
-//
-//	int size();
-//	void push(Node targ);
-//	void push(RRTNode targ);
-//	void pop();
-//
-//	int get_nearest_index(Node targ);
-//	RRTNode get(int i);
-//};
-
-
 class RRTTree 
 {
 private:

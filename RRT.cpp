@@ -5,7 +5,6 @@
 #include "RRT.h"
 #include "CFreeICS.h"
 #include "Robot.h"
-#include "Collision.h"
 #include "CFree.h"
 
 
@@ -36,23 +35,6 @@ bool RRT::initialize(Node ini)
 	tree.replace(RRTNode(ini, init_CFree[index]));
 	return true;
 }
-
-
-//bool RRT::robot_update(Node newnode)	// Valid node -> true,  Invalid node -> false
-//{
-//	Controller* controller = Controller::get_instance();
-//	controller->robot_update(newnode);
-//
-//	if (controller->RintersectR(newnode)) {
-//		tree.pop_back();
-//		return false;
-//	}
-//	if (controller->RintersectW(newnode)) {
-//		tree.pop_back();
-//		return false;
-//	}
-//	return true;
-//}
 
 
 bool RRT::dfsconfig_valid(Node newnode)
@@ -198,9 +180,6 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 
 
 // ===============================================================================
-
-
-
 
 
 bool RevRRT::initialize(Node fin)
@@ -645,8 +624,8 @@ GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
             widt = (pmaxt + (360 - pmint)) / 5;
         }
 
-        std::cout << "y width: " << widy << std::endl;
-        std::cout << "theta width: " << widt << std::endl;
+//        std::cout << "y width: " << widy << std::endl;
+//        std::cout << "theta width: " << widt << std::endl;
         if (widy < 8)      return GoalJudge::NotGoal;
         if (widt < 18)      return GoalJudge::NotGoal;
     }
@@ -654,7 +633,7 @@ GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 }
 
 
-NodeList RRTConnect::generate_path(GoalJudge flag)
+NodeList RRTConnect::make_path(GoalJudge flag)
 {
 	if(flag == GoalJudge::SGoal){
 		return s_tree.generate_path();
@@ -665,7 +644,7 @@ NodeList RRTConnect::generate_path(GoalJudge flag)
 		return path;
 	}
 	else if(flag == GoalJudge::Connect){
-		return NodeList();
+		return path_concat();
 	}
 
 	assert(true);
@@ -679,6 +658,18 @@ bool RRTConnect::extend_limit(Node n1, Node n2)
 	if(threshold < 1.0)	return true;
 	return false;
 }
+
+
+NodeList RRTConnect::path_concat()
+{
+	NodeList spath, gpath;
+	spath = s_tree.generate_path();
+	gpath = g_tree.generate_path();
+	gpath.reverse();
+	spath.concat(gpath);
+	return spath;
+}
+
 
 RRTConnect::RRTConnect()
 	:s_tree(), g_tree(), strategy(new DfsCFO()), s_threshold(read_threshold())
@@ -704,8 +695,12 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 		RRTNode opponent_node;
 		int opponent_index;
 		
+		std::cout << "start conf: " << s_tree.size() << 
+		 	"  goal conf: " << g_tree.size() << std::endl;
+		
 		if(s_tree.size() < g_tree.size()){
 			Node newnode = s_tree.format(Rand);
+			for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
 			opponent_node = g_tree.get_nearest_node(newnode);
 			opponent_index = g_tree.get_nearest_index(newnode);
 
@@ -713,7 +708,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 			RRTNode sconf_newnode = s_tree.back_RRTNode();
 
 			GoalJudge sgj = sconf_goaljudge(goal, sconf_newnode, opponent_node);
-			if(sgj != GoalJudge::NotGoal)	return generate_path(sgj);
+			if(sgj != GoalJudge::NotGoal)	return make_path(sgj);
 
 			while(1){
 				g_tree.add(opponent_index, newnode); 
@@ -723,7 +718,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 						g_tree.back_RRTNode().get_cfree_obj(), 
 						s_tree.back_RRTNode().node, opponent_node);
 				
-				if(ggj != GoalJudge::NotGoal)	return generate_path(ggj);
+				if(ggj != GoalJudge::NotGoal)	return make_path(ggj);
 
 				if(extend_limit(newnode, opponent_node.node)){
 					break;
@@ -736,6 +731,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 
 		else{
 			Node newnode = g_tree.format(Rand);
+			for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
 			opponent_index = s_tree.get_nearest_index(newnode);
 			opponent_node  = s_tree.get_nearest_node(newnode);
 
@@ -746,13 +742,13 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 					g_tree.back_RRTNode().get_cfree_obj(), 
 					opponent_node, gconf_newnode);
 			
-			if(ggj != GoalJudge::NotGoal)	return generate_path(ggj);
+			if(ggj != GoalJudge::NotGoal)	return make_path(ggj);
 			
 			while(1){
 				s_tree.add(opponent_index, newnode);
 				if(!sconf_update())	break;
 				GoalJudge sgj = sconf_goaljudge(goal, opponent_node, g_tree.back_RRTNode().node);
-				if(sgj != GoalJudge::NotGoal)	return generate_path(sgj);
+				if(sgj != GoalJudge::NotGoal)	return make_path(sgj);
 			
 				if(extend_limit(newnode, opponent_node.node)){
 					break;
@@ -774,8 +770,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 void rand_init()
 {
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
-//	std::srand((unsigned int)seed);
-	std::srand(500);	
+	std::srand((unsigned int)seed);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 

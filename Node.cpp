@@ -144,7 +144,7 @@ void NodeList::printIO()
 
 void NodeList::print_file(std::string fn)
 {
-	std::string fp = "C:/Users/nakanishi/Desktop/" + fn + ".csv";
+	std::string fp = "path/" + fn + ".csv";
 	std::ofstream file(fp, std::ios::app);
 	for (int i = 0; i < (int)serial_node.size(); ++i) {
 		for (int dof = 0; dof < 6; ++dof) {
