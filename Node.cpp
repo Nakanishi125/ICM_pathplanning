@@ -37,8 +37,7 @@ Node::Node()
 Node::Node(double e1, double e2, double e3, double e4, double e5, double e6)
 	: node()
 {
-	node.resize(6);
-	node[0] = e1;	node[1] = e2;	node[2] = e3;
+	node.resize(6);node[0] = e1;	node[1] = e2;	node[2] = e3;
 	node[3] = e4;	node[4] = e5;	node[5] = e6;
 }
 
@@ -123,20 +122,69 @@ Node Node::unitmove(const Node& other)
 	return new_node;
 }
 
+
+Node Node::operator+(const Node& other)	const
+{
+	return Node(node[0] + other.node[0],
+			    node[1] + other.node[1],
+			    node[2] + other.node[2],
+			    node[3] + other.node[3],
+			    node[4] + other.node[4],
+			    node[5] + other.node[5]);
+}
+
+Node Node::operator-(const Node& other)	const
+{
+	return Node(node[0] - other.node[0],
+			    node[1] - other.node[1],
+			    node[2] - other.node[2],
+			    node[3] - other.node[3],
+			    node[4] - other.node[4],
+			    node[5] - other.node[5]);
+}
+
+Node Node::operator*(int r)	const
+{
+	return Node(r*node[0], r*node[1], r*node[2],
+			    r*node[3], r*node[4], r*node[5]);
+}
+
+Node operator*(int r, const Node& other)
+{
+	return Node(r*other.node[0], r*other.node[1], r*other.node[2],
+			    r*other.node[3], r*other.node[4], r*other.node[5]);
+}
+
+double Node::norm(const Node& other)
+{
+	double sqr = (node[0] - other.node[0])*(node[0] - other.node[0]) 
+				+(node[1] - other.node[1])*(node[1] - other.node[1]) 
+				+(node[2] - other.node[2])*(node[2] - other.node[2]) 
+				+(node[3] - other.node[3])*(node[3] - other.node[3]) 
+				+(node[4] - other.node[4])*(node[4] - other.node[4]) 
+				+(node[5] - other.node[5])*(node[5] - other.node[5]);
+	return std::sqrt(sqr);
+}
+
+
+
+
+
+
 NodeList::NodeList()
-	:serial_node()
+	:elm()
 {}
 
 void NodeList::push_back(Node add_node)
 {
-	serial_node.push_back(add_node);
+	elm.push_back(add_node);
 }
 
 void NodeList::printIO()
 {
-	for (int i = 0; i < (int)serial_node.size(); ++i) {
+	for (int i = 0; i < (int)elm.size(); ++i) {
 		for (int dof = 0; dof < 6; ++dof) {
-			std::cout << serial_node[i].get_element(dof) << ", ";
+			std::cout << elm[i].get_element(dof) << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -146,9 +194,9 @@ void NodeList::print_file(std::string fn)
 {
 	std::string fp = "path/" + fn + ".csv";
 	std::ofstream file(fp, std::ios::app);
-	for (int i = 0; i < (int)serial_node.size(); ++i) {
+	for (int i = 0; i < (int)elm.size(); ++i) {
 		for (int dof = 0; dof < 6; ++dof) {
-			file << serial_node[i].get_element(dof) << ", ";
+			file << elm[i].get_element(dof) << ", ";
 		}
 		file << std::endl;
 	}
@@ -157,11 +205,11 @@ void NodeList::print_file(std::string fn)
 
 void NodeList::reverse()
 {
-	const std::vector<Node> copy(serial_node);
+	const std::vector<Node> copy(elm);
 	const int nlsize = (int)copy.size();
 
 	for (int i = 0; i < nlsize; ++i) {
-		serial_node[i] = copy[nlsize - 1 - i];
+		elm[i] = copy[nlsize - 1 - i];
 	}
 }
 
@@ -169,6 +217,6 @@ void NodeList::reverse()
 void NodeList::concat(const NodeList& other)
 {
 	for (int i = 0; i < other.size(); ++i) {
-		serial_node.push_back(other.get(i));
+		elm.push_back(other.get(i));
 	}
 }

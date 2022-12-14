@@ -6,9 +6,9 @@ Labeling::Labeling(CSpace cs)
 	:label(nullptr), cspace(cs), numx(), numy(), numth()
 {
 	CSpaceConfig* conf = CSpaceConfig::get_instance();
-	numx = conf->numx;
-	numy = conf->numy;
-	numth = conf->numth; 
+	numx = conf->getnumx();
+	numy = conf->getnumy();
+	numth = conf->getnumth(); 
 
 	label = new int** [numx];
 	for (int i = 0; i < numx; i++) {
@@ -65,14 +65,14 @@ int Labeling::simple_labeling()
 	int count = 0;
 	for (int i = 0; i < cspace.size(); ++i) {
 		State3D cur_pos = cspace.get_pt(i);
-		int ix = (int)((cur_pos.x - conf->bottom.x) / conf->range.x);
-		int iy = (int)((cur_pos.y - conf->bottom.y) / conf->range.y);
-		int ith = (int)((cur_pos.th - conf->bottom.th) / conf->range.z);
+		int ix = (int)((cur_pos.x - conf->getbottom().x) / conf->getrange().x);
+		int iy = (int)((cur_pos.y - conf->getbottom().y) / conf->getrange().y);
+		int ith = (int)((cur_pos.th - conf->getbottom().th) / conf->getrange().z);
 
 		//Later you can delete below assert func.
-		assert((cur_pos.x - conf->bottom.x) % conf->range.x == 0);
-		assert((cur_pos.y - conf->bottom.y) % conf->range.y == 0);
-		assert((cur_pos.th - conf->bottom.th) % conf->range.z == 0);
+		assert((cur_pos.x - conf->getbottom().x) % conf->getrange().x == 0);
+		assert((cur_pos.y - conf->getbottom().y) % conf->getrange().y == 0);
+		assert((cur_pos.th - conf->getbottom().th) % conf->getrange().z == 0);
 
 
 		if (cspace.elm[i].mk && label[ix][iy][ith] == 0) {

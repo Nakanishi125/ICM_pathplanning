@@ -37,15 +37,18 @@ struct Node
 	Node unitmove(const Node& other);	// from *this to other
 
 	double& operator [](int dof) { return node[dof]; }
+	Node operator+(const Node& other)	const;
+	Node operator-(const Node& other)	const;
+	Node operator*(int r)	const;
+	friend Node operator*(int r, const Node& other);
+	double norm(const Node& other);
 };
 
 
-class NodeList
+struct NodeList
 {
-private:
-	std::vector<Node> serial_node;
+	std::vector<Node> elm;
 
-public:
 	NodeList();
 
 	void push_back(Node add_node);
@@ -53,8 +56,9 @@ public:
 	void printIO();
 	void print_file(std::string fn);
 
-	int size() const { return (int)serial_node.size(); }
-	Node get(int i) const { return serial_node[i]; }
+	int size() const { return (int)elm.size(); }
+	Node get(int i) const { return elm[i]; }
+	Node& operator[](int i)	{ return elm[i]; }
 
 	void concat(const NodeList& other);	// this ‚ÌŒã‚É other
 };

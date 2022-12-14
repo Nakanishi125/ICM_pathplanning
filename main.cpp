@@ -1,9 +1,12 @@
-﻿#include "TaskSet.h"
+﻿#include "CFreeICS.h"
+#include "TaskSet.h"
 #include "Visual.h"
 #include "RRT.h"
 #include "Problem.h"
+#include "pathsmooth.h"
 
 #include <cassert>
+#include <ctime>
 #include <iostream>
 #include <chrono>
 #include <iomanip>
@@ -17,14 +20,26 @@ int main(int argc, char* argv[])
     std::cout << "Generate Path(RRT)          -> 2" << std::endl;
     std::cout << "Generate Path(Reverse RRT)  -> 3" << std::endl;
     std::cout << "Generate Path(RRT-Connect)  -> 4" << std::endl;
+	std::cout << "Path smoothing              -> 5" << std::endl;
+
     int i = 0;
     std::cout << ">";   std::cin >> i;
-	assert(i > 0 && i <= 4);
+	assert(i > 0 && i <= 5);
 
     if (i == 1) {
         TaskSet setting;
         setting.run();
     }
+	else if(i == 5){
+		std::string fn;
+		std::cin >> fn;
+		NodeList nl = csv_to_nodelist("path/" + fn + ".csv");
+
+		PathSmooth* smoother = new PathSmooth(nl);
+		
+		NodeList smooth_path = smoother->smooth();
+		smooth_path.printIO();	
+	}
 	else{
 		Problem* p = nullptr;
 	    if (i == 2)	p = new Problem(new RRT);
@@ -32,12 +47,21 @@ int main(int argc, char* argv[])
 		if (i == 4) p = new Problem(new RRTConnect);
 
 		NodeList path = p->pathplanning();
+		
+		long cpu_time = clock();
+		double sec = (double)cpu_time / CLOCKS_PER_SEC;
+		printf("%f[s]\n", sec);
 	
 		path.printIO();
+		path.print_file("rect_connect2");
 		delete p;
 	}
 
-		
+	
+	Node n(10,20,30,40,50,60);
+	CFreeICS* ics = new CFreeICS(n);
+	std::vector<PointCloud> pcs = ics->extract();
+
 //    else if (i == 3) {
 //        //Node fin(18.8, -21.2, -24.3, 18.9, -14.8, -3);
 //        //Node fin(38.1, -39.2, -63.4, 25.7, -41.5, -41.4);

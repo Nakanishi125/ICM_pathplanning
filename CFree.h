@@ -21,13 +21,33 @@ protected:
 class RasterCFO : public CFO
 {
 private:
+	std::vector<PointCloud> c_freeobj;
+
+	void init()
+	{
+		c_freeobj.clear();
+		c_freeobj.shrink_to_fit();
+	}
 
 
 public:
 	RasterCFO();
 	~RasterCFO();
-	std::vector<PointCloud> extract(PointCloud prev, Node newnode);
 
+	std::vector<PointCloud> extract(PointCloud prev, Node newnode){
+		init();
+		CFreeICS cfi(newnode);
+		c_freeobj = cfi.extract();
+
+		for(auto itr = c_freeobj.begin(); itr != c_freeobj.end();){
+			if(prev.overlap(*itr)){
+				++itr;	continue;
+			}
+			itr = c_freeobj.erase(itr);
+		}
+
+		return c_freeobj;
+	}
 };
 
 
@@ -93,8 +113,8 @@ public:
 	bool preprocess(State3D& pt)
 	{
 		CSpaceConfig* cs = CSpaceConfig::get_instance();
-		if(pt.th < 0)	            pt.th = (cs->top.th + cs->range.z) + pt.th;
-		if(pt.th > cs->symangle)	pt.th = pt.th - (cs->top.th + cs->range.z);
+		if(pt.th < 0)	            pt.th = pt.th + (cs->gettop().th + cs->getrange().z);
+		if(pt.th > cs->gettop().th)	pt.th = pt.th - (cs->gettop().th + cs->getrange().z);
 		int index = target.coord_to_index(pt);
 		check_ifexist(pt);
 
@@ -154,34 +174,34 @@ public:
 	{
 		CSpaceConfig* cs = CSpaceConfig::get_instance();
 
-		if (dir == 1)		return State3D(pt.x - cs->range.x, pt.y - cs->range.y, pt.th - cs->range.z);
-		if (dir == 2)		return State3D(pt.x,               pt.y - cs->range.y, pt.th - cs->range.z);
-		if (dir == 3)		return State3D(pt.x + cs->range.x, pt.y - cs->range.y, pt.th - cs->range.z);
-		if (dir == 4)		return State3D(pt.x - cs->range.x, pt.y,               pt.th - cs->range.z);
-		if (dir == 5)		return State3D(pt.x,               pt.y,               pt.th - cs->range.z);
-		if (dir == 6)		return State3D(pt.x + cs->range.x, pt.y,               pt.th - cs->range.z);
-		if (dir == 7)		return State3D(pt.x - cs->range.x, pt.y + cs->range.y, pt.th - cs->range.z);
-		if (dir == 8)		return State3D(pt.x,               pt.y + cs->range.y, pt.th - cs->range.z);
-		if (dir == 9)		return State3D(pt.x + cs->range.x, pt.y + cs->range.y, pt.th - cs->range.z);
+		if (dir == 1)		return State3D(pt.x - cs->getrange().x, pt.y - cs->getrange().y, pt.th - cs->getrange().z);
+		if (dir == 2)		return State3D(pt.x,                    pt.y - cs->getrange().y, pt.th - cs->getrange().z);
+		if (dir == 3)		return State3D(pt.x + cs->getrange().x, pt.y - cs->getrange().y, pt.th - cs->getrange().z);
+		if (dir == 4)		return State3D(pt.x - cs->getrange().x, pt.y,                    pt.th - cs->getrange().z);
+		if (dir == 5)		return State3D(pt.x,                    pt.y,                    pt.th - cs->getrange().z);
+		if (dir == 6)		return State3D(pt.x + cs->getrange().x, pt.y,                    pt.th - cs->getrange().z);
+		if (dir == 7)		return State3D(pt.x - cs->getrange().x, pt.y + cs->getrange().y, pt.th - cs->getrange().z);
+		if (dir == 8)		return State3D(pt.x,                    pt.y + cs->getrange().y, pt.th - cs->getrange().z);
+		if (dir == 9)		return State3D(pt.x + cs->getrange().x, pt.y + cs->getrange().y, pt.th - cs->getrange().z);
 
-		if (dir == 10)		return State3D(pt.x - cs->range.x, pt.y - cs->range.y, pt.th);
-		if (dir == 11)		return State3D(pt.x,               pt.y - cs->range.y, pt.th);
-		if (dir == 12)		return State3D(pt.x + cs->range.x, pt.y - cs->range.y, pt.th);
-		if (dir == 13)		return State3D(pt.x - cs->range.x, pt.y,               pt.th);
-		if (dir == 14)		return State3D(pt.x + cs->range.x, pt.y,               pt.th);
-		if (dir == 15)		return State3D(pt.x - cs->range.x, pt.y + cs->range.y, pt.th);
-		if (dir == 16)		return State3D(pt.x,               pt.y + cs->range.y, pt.th);
-		if (dir == 17)		return State3D(pt.x + cs->range.x, pt.y + cs->range.y, pt.th);
+		if (dir == 10)		return State3D(pt.x - cs->getrange().x, pt.y - cs->getrange().y, pt.th);
+		if (dir == 11)		return State3D(pt.x,                    pt.y - cs->getrange().y, pt.th);
+		if (dir == 12)		return State3D(pt.x + cs->getrange().x, pt.y - cs->getrange().y, pt.th);
+		if (dir == 13)		return State3D(pt.x - cs->getrange().x, pt.y,                    pt.th);
+		if (dir == 14)		return State3D(pt.x + cs->getrange().x, pt.y,                    pt.th);
+		if (dir == 15)		return State3D(pt.x - cs->getrange().x, pt.y + cs->getrange().y, pt.th);
+		if (dir == 16)		return State3D(pt.x,                    pt.y + cs->getrange().y, pt.th);
+		if (dir == 17)		return State3D(pt.x + cs->getrange().x, pt.y + cs->getrange().y, pt.th);
 
-		if (dir == 18)		return State3D(pt.x - cs->range.x, pt.y - cs->range.y, pt.th + cs->range.z);
-		if (dir == 19)		return State3D(pt.x,               pt.y - cs->range.y, pt.th + cs->range.z);
-		if (dir == 20)		return State3D(pt.x + cs->range.x, pt.y - cs->range.y, pt.th + cs->range.z);
-		if (dir == 21)		return State3D(pt.x - cs->range.x, pt.y,               pt.th + cs->range.z);
-		if (dir == 22)		return State3D(pt.x,               pt.y,               pt.th + cs->range.z);
-		if (dir == 23)		return State3D(pt.x + cs->range.x, pt.y,               pt.th + cs->range.z);
-		if (dir == 24)		return State3D(pt.x - cs->range.x, pt.y + cs->range.y, pt.th + cs->range.z);
-		if (dir == 25)		return State3D(pt.x,               pt.y + cs->range.y, pt.th + cs->range.z);
-		if (dir == 26)		return State3D(pt.x + cs->range.x, pt.y + cs->range.y, pt.th + cs->range.z);
+		if (dir == 18)		return State3D(pt.x - cs->getrange().x, pt.y - cs->getrange().y, pt.th + cs->getrange().z);
+		if (dir == 19)		return State3D(pt.x,                    pt.y - cs->getrange().y, pt.th + cs->getrange().z);
+		if (dir == 20)		return State3D(pt.x + cs->getrange().x, pt.y - cs->getrange().y, pt.th + cs->getrange().z);
+		if (dir == 21)		return State3D(pt.x - cs->getrange().x, pt.y,                    pt.th + cs->getrange().z);
+		if (dir == 22)		return State3D(pt.x,                    pt.y,                    pt.th + cs->getrange().z);
+		if (dir == 23)		return State3D(pt.x + cs->getrange().x, pt.y,                    pt.th + cs->getrange().z);
+		if (dir == 24)		return State3D(pt.x - cs->getrange().x, pt.y + cs->getrange().y, pt.th + cs->getrange().z);
+		if (dir == 25)		return State3D(pt.x,                    pt.y + cs->getrange().y, pt.th + cs->getrange().z);
+		if (dir == 26)		return State3D(pt.x + cs->getrange().x, pt.y + cs->getrange().y, pt.th + cs->getrange().z);
 
 		assert(true);
 		return State3D();

@@ -16,11 +16,20 @@ CSpaceConfig* CSpaceConfig::get_instance()
 }
 
 CSpaceConfig::CSpaceConfig()
-	:top(read_top()), 
-  	 bottom(read_bottom()), 
+	:top(),
+     bottom(read_bottom()), 
 	 range(read_range()),
 	 symangle(read_symangle())
 {
+	bp::ptree pt;
+	read_ini("config/SpaceConfig.ini", pt);
+	int x, y, th;
+	boost::optional<int> carrier = pt.get_optional<int>("top.x");
+	x = carrier.get();
+	carrier = pt.get_optional<int>("top.y");
+	y = carrier.get();
+	
+	top = State3D(x, y, symangle);
 	numx = (top.x - bottom.x)/range.x + 1;
 	numy = (top.y - bottom.y)/range.y + 1;
 	numth = (top.th - bottom.th)/range.z + 1;

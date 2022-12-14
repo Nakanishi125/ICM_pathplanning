@@ -40,9 +40,9 @@ public:
 		int clust = label->labeling3D();
 		c_free_ics.resize(clust);
 
-		for (int ix = 0; ix < conf->numx; ++ix)
-			for (int iy = 0; iy < conf->numy; ++iy)
-				for (int ith = 0; ith < conf->numth; ++ith) 
+		for (int ix = 0; ix < conf->getnumx(); ++ix)
+			for (int iy = 0; iy < conf->getnumy(); ++iy)
+				for (int ith = 0; ith < conf->getnumth(); ++ith) 
 					distribute(label, ix, iy, ith);
 
 		delete label;
@@ -63,15 +63,15 @@ public:
 
 		if(c_free_ics.size() == 0)	return c_free_ics;
 
-		merge(conf->symangle);
+		merge(conf->getsymangle());
 		return c_free_ics;
 	}
 
 	void distribute(Labeling* lbel, int ix, int iy, int ith)
 	{
 		CSpaceConfig* conf = CSpaceConfig::get_instance();	
-		State3D btm = conf->bottom;
-		Vector3D<int> rng = conf->range;
+		State3D btm = conf->getbottom();
+		Vector3D<int> rng = conf->getrange();
 		int area = lbel->get_label(ix, iy, ith);
 		if (area != 0)
 			c_free_ics[area - 1].push(State3D(btm.x + rng.x*ix, btm.y + rng.y*iy, btm.th + rng.z*ith));

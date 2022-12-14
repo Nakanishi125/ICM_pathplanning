@@ -6,8 +6,8 @@
 bool edge_judge(State3D pt)
 {
 	CSpaceConfig* cs = CSpaceConfig::get_instance();
-	if (pt.x == cs->bottom.x || pt.y == cs->bottom.y)	return true;
-	if (pt.x == cs->top.x || pt.y == cs->top.y)		return true;
+	if (pt.x == cs->getbottom().x || pt.y == cs->getbottom().y)	return true;
+	if (pt.x == cs->gettop().x || pt.y == cs->gettop().y)		return true;
 	return false;
 }
 

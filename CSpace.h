@@ -21,17 +21,25 @@ Vector3D<int> read_range();
 
 class CSpaceConfig
 {
-public:
-	const State3D top, bottom;
-	const Vector3D<int> range;
-	const int symangle;
+private:
+	State3D top, bottom;
+	Vector3D<int> range;
+	int symangle;
 	int numx, numy, numth;
 
-	static CSpaceConfig* get_instance();
-
-private:
 	CSpaceConfig();
 	static CSpaceConfig* instance;
+
+public:
+	static CSpaceConfig* get_instance();
+
+	State3D gettop(){return top;}
+	State3D getbottom(){return bottom;}
+	Vector3D<int> getrange(){return range;}
+	int getsymangle(){return symangle;}
+	int getnumx(){return numx;}
+	int getnumy(){return numy;}
+	int getnumth(){return numth;}
 };
 
 
@@ -43,23 +51,23 @@ struct CSpace
 	CSpace()
 	{
 		CSpaceConfig* cs = CSpaceConfig::get_instance();
-		elm.resize(cs->numx * cs->numy * cs->numth);
+		elm.resize(cs->getnumx() * cs->getnumy() * cs->getnumth());
 
 		int debug = 0;
-		for (int i = 0; i < cs->numx; ++i) {
-			for (int j = 0; j < cs->numy; ++j) {
-				for (int k = 0; k < cs->numth; ++k) {
-					State3D pos(cs->bottom.x + cs->range.x * i,
-						        cs->bottom.y + cs->range.y * j,
-						        cs->bottom.th + cs->range.z * k);
+		for (int i = 0; i < cs->getnumx(); ++i) {
+			for (int j = 0; j < cs->getnumy(); ++j) {
+				for (int k = 0; k < cs->getnumth(); ++k) {
+					State3D pos(cs->getbottom().x + cs->getrange().x * i,
+						        cs->getbottom().y + cs->getrange().y * j,
+						        cs->getbottom().th + cs->getrange().z * k);
 
-					int index = i*cs->numy*cs->numth + j*cs->numth + k;
+					int index = i*cs->getnumy()*cs->getnumth() + j*cs->getnumth() + k;
 					elm[index] = PointMark(pos, false);
 					debug++;
 				}
 			}
 		}
-		assert(debug == cs->numx * cs->numy * cs->numth);
+		assert(debug == cs->getnumx() * cs->getnumy() * cs->getnumth());
 	}
 
 	void init()
@@ -88,27 +96,27 @@ struct CSpace
 	int coord_to_index(State3D st)		//test later
 	{
 		CSpaceConfig* cs = CSpaceConfig::get_instance();
-		int dx = (st.x - cs->bottom.x) / cs->range.x;
-		int dy = (st.y - cs->bottom.y) / cs->range.y;
-		int dth = (st.th - cs->bottom.th) / cs->range.z;
+		int dx = (st.x - cs->getbottom().x) / cs->getrange().x;
+		int dy = (st.y - cs->getbottom().y) / cs->getrange().y;
+		int dth = (st.th - cs->getbottom().th) / cs->getrange().z;
 		
-		assert((st.x - cs->bottom.x) % cs->range.x == 0);
-		assert((st.y - cs->bottom.y) % cs->range.y == 0);
-		assert((st.th - cs->bottom.th) % cs->range.z == 0);
+		assert((st.x - cs->getbottom().x) % cs->getrange().x == 0);
+		assert((st.y - cs->getbottom().y) % cs->getrange().y == 0);
+		assert((st.th - cs->getbottom().th) % cs->getrange().z == 0);
 
-		return dx * (cs->numy * cs->numth) + dy * (cs->numth) + dth;
+		return dx * (cs->getnumy() * cs->getnumth()) + dy * (cs->getnumth()) + dth;
 	}
 
 	State3D index_to_coord(int index)	// test later
 	{
 		CSpaceConfig* cs = CSpaceConfig::get_instance();
-		int x = index / (cs->numy * cs->numth);
-		int resx = index % (cs->numy * cs->numth);
-		int y = resx / (cs->numth);
-		int th = resx % (cs->numth);
+		int x = index / (cs->getnumy() * cs->getnumth());
+		int resx = index % (cs->getnumy() * cs->getnumth());
+		int y = resx / (cs->getnumth());
+		int th = resx % (cs->getnumth());
 
-		return State3D(cs->bottom.x  + x * cs->range.x
-					 , cs->bottom.y  + y * cs->range.y
-					 , cs->bottom.th + th* cs->range.z);
+		return State3D(cs->getbottom().x  + x * cs->getrange().x
+					 , cs->getbottom().y  + y * cs->getrange().y
+					 , cs->getbottom().th + th* cs->getrange().z);
 	}
 };

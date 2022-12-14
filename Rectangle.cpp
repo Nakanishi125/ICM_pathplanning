@@ -3,8 +3,8 @@
 namespace bp = boost::property_tree;
 
 Rectangle::Rectangle()
-	: short_side(read_shortside()),
-	  long_side(read_longside()),
+	: short_side(70),
+	  long_side(100),
 	  sym_angle(180)
 {
 }

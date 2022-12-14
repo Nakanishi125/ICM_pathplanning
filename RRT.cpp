@@ -688,15 +688,17 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 	while(1)
 	{
 		static int i = 0;	++i;
-		if(i>200000)	exit(5963);
+		if(i>500000)	exit(5963);
 		
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		RRTNode opponent_node;
 		int opponent_index;
-		
-		std::cout << "start conf: " << s_tree.size() << 
-		 	"  goal conf: " << g_tree.size() << std::endl;
+	
+		if(i % 10 == 0){
+			std::cout << "start conf: " << s_tree.size() << 
+			    	   "  goal conf: " << g_tree.size() << std::endl;
+		}std::cout << i << ": ";
 		
 		if(s_tree.size() < g_tree.size()){
 			Node newnode = s_tree.format(Rand);
@@ -789,7 +791,7 @@ double calc_dth2(double th, double goalth)
 {
     // Return the value nearer to the goal state
 	CSpaceConfig* space = CSpaceConfig::get_instance();
-	int sym = space->symangle;
+	int sym = space->getsymangle();
     double dif = std::abs(goalth - th);
     return (dif < sym/2) ? dif : sym - dif;
 }
