@@ -132,7 +132,9 @@ GoalJudge RRT::goal_judge(State3D goal)
 RRT::RRT()
 	:tree(), garound(), strategy(new DfsCFO()), 
   	threshold(read_threshold())
-{}
+{
+	set_strategy(new RasterCFO());
+}
 
 
 NodeList RRT::plan(Node ini, Node fin, State3D goal)
@@ -772,7 +774,8 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 void rand_init()
 {
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
-	std::srand((unsigned int)seed);
+	//std::srand((unsigned int)seed);
+	std::srand(91600);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 

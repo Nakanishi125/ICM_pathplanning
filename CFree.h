@@ -31,8 +31,8 @@ private:
 
 
 public:
-	RasterCFO();
-	~RasterCFO();
+	RasterCFO(){};
+	~RasterCFO(){};
 
 	std::vector<PointCloud> extract(PointCloud prev, Node newnode){
 		init();
