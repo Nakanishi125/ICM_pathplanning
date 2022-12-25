@@ -33,7 +33,7 @@ struct Node
 	double get_absangle(int index) const;
 
 	double distance(const Node& other);
-	Node normalize(const Node& other);		// “®‚­‚Ì‚Í*this
+	Node normalize(const Node& other);		// ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½*this
 	Node unitmove(const Node& other);	// from *this to other
 
 	double& operator [](int dof) { return node[dof]; }
@@ -60,5 +60,5 @@ struct NodeList
 	Node get(int i) const { return elm[i]; }
 	Node& operator[](int i)	{ return elm[i]; }
 
-	void concat(const NodeList& other);	// this ‚ÌŒã‚É other
+	void concat(const NodeList& other);	// this ï¿½ÌŒï¿½ï¿½ other
 };

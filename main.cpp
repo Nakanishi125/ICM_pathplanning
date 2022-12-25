@@ -21,10 +21,11 @@ int main(int argc, char* argv[])
     std::cout << "Generate Path(Reverse RRT)  -> 3" << std::endl;
     std::cout << "Generate Path(RRT-Connect)  -> 4" << std::endl;
 	std::cout << "Path smoothing              -> 5" << std::endl;
+	std::cout << "Debug                       -> 6" << std::endl;
 
     int i = 0;
     std::cout << ">";   std::cin >> i;
-	assert(i > 0 && i <= 5);
+	assert(i > 0 && i <= 6);
 
     if (i == 1) {
         TaskSet setting;
@@ -39,6 +40,19 @@ int main(int argc, char* argv[])
 		
 		NodeList smooth_path = smoother->smooth();
 		smooth_path.printIO();	
+	}
+	else if(i == 6){
+		std::string fn;
+		std::cin >> fn;
+		NodeList nl = csv_to_nodelist("path/" + fn + ".csv");
+
+		PathSmooth* smoother = new PathSmooth(nl);
+		if(smoother->debug()){
+			std::cout << "Valid Route" <<std::endl;
+		}
+		else{
+			std::cout << "Invalid Route" << std::endl;
+		}
 	}
 	else{
 		Problem* p = nullptr;
