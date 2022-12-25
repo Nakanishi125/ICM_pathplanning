@@ -20,7 +20,7 @@ NodeList PathSmooth::smooth()
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
 
-	for(int i=0; i<6;++i)	std::cout << ini[i] << ", "; std::cout << std::endl;
+	for(int i=0; i<6;++i)	std::cout << ini.get_element(i) << ", "; std::cout << std::endl;
 	std::vector<PointCloud> init_CFree = ics.extract();
 	int num = 0;
 	for (const auto& cls : init_CFree) {
@@ -53,13 +53,13 @@ NodeList PathSmooth::smooth()
 			//opt_path[i] = opt_path[i] - alpha*(opt_path[i] - orig_path[i]);
 			//opt_path[i] = opt_path[i] - beta*(2*opt_path[i] - opt_path[i-1] - opt_path[i+1]);
 			for(int n=0; n<Node::dof; ++n){
-				if(opt_path[i][n] > 90)		opt_path[i][n] = 90;
-				if(opt_path[i][n] < -90)	opt_path[i][n] = -90;
+				if(opt_path[i].get_element(n) > 90)		opt_path[i].set_element(n, 90);
+				if(opt_path[i].get_element(n) < -90)	opt_path[i].set_element(n, 90);
 			}
 			std::cout << "before path: ";
-			for(int elm=0; elm<Node::dof; ++elm)	std::cout << pre_path[i][elm] << ", ";	std::cout << std::endl;
+			for(int elm=0; elm<Node::dof; ++elm)	std::cout << pre_path[i].get_element(elm) << ", ";	std::cout << std::endl;
 			std::cout << "after  path: ";
-			for(int elm=0; elm<Node::dof; ++elm)	std::cout << opt_path[i][elm] << ", ";	std::cout << std::endl;
+			for(int elm=0; elm<Node::dof; ++elm)	std::cout << opt_path[i].get_element(elm) << ", ";	std::cout << std::endl;
 			error += opt_path[i].norm(pre_path[i]);
 
 			if(!robot_update(opt_path[i])){
@@ -142,7 +142,7 @@ bool PathSmooth::debug()
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
 
-	for(int i=0; i<6;++i)	std::cout << ini[i] << ", "; std::cout << std::endl;
+	for(int i=0; i<6;++i)	std::cout << ini.get_element(i) << ", "; std::cout << std::endl;
 	std::vector<PointCloud> init_CFree = ics.extract();
 	int num = 0;
 	for (const auto& cls : init_CFree) {

@@ -7,8 +7,8 @@ SRCS += Robot.cpp RRTTree.cpp Shape.cpp Square.cpp Wall.cpp LShape.cpp TaskSet.c
 OBJS = $(SRCS:.cpp=.o)
 
 CXX = g++
-CXXFLAGS = -g -Wall 
-#CXXFLAGS = -flto -Wall -O3 -mtune=native -march=native -mfpmath=both
+#CXXFLAGS = -g -Wall 
+CXXFLAGS = -flto -Wall -O3 -mtune=native -march=native -mfpmath=both
 INCDIR = -I/usr/include
 
 #LIBDIR = -L/usr/local/lib

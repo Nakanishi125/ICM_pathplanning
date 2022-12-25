@@ -2,15 +2,39 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
-class HalfNode
+
+struct RobotDouble
 {
-private:
-	std::vector<double> hnode;
+	std::string val;
 
-public:
+	RobotDouble()
+		:val("")
+	{
+	}
+	RobotDouble(double _val){
+		std::ostringstream oss;
+		oss << std::fixed << std::setprecision(2) << _val;
+		val = oss.str();
+	}
+
+	double value() const {
+		return std::stod(val);
+	}
+
+};
+
+std::ostream& operator<<(std::ostream& out, const RobotDouble &rd);
+
+struct HalfNode
+{
+	std::vector<RobotDouble> hnode;
+
 	const static int dof = 3;
 	HalfNode(double ang1, double ang2, double ang3);
+	HalfNode(RobotDouble ang1, RobotDouble ang2, RobotDouble ang3);
 
 	double get_element(int n);
 };
@@ -18,15 +42,17 @@ public:
 
 struct Node
 {
-	std::vector<double> node;
+	std::vector<RobotDouble> node;
 
 	const static int dof = 6;
 
 	Node();
 	Node(double e1, double e2, double e3, double e4, double e5, double e6);
 	Node(std::vector<double> nd);
+	Node(std::vector<RobotDouble> nd);
 
 	double get_element(int n); 
+	void set_element(int dof, double d);
 	double get_element(int n) const;
 	HalfNode get_langles();
 	HalfNode get_rangles();
@@ -36,7 +62,6 @@ struct Node
 	Node normalize(const Node& other);		// �����̂�*this
 	Node unitmove(const Node& other);	// from *this to other
 
-	double& operator [](int dof) { return node[dof]; }
 	Node operator+(const Node& other)	const;
 	Node operator-(const Node& other)	const;
 	Node operator*(int r)	const;

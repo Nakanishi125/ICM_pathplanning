@@ -9,17 +9,24 @@
 HalfNode::HalfNode(double ang1, double ang2, double ang3)
 {
 	hnode.resize(3);
+	hnode[0] = RobotDouble(ang1);
+	hnode[1] = RobotDouble(ang2);
+	hnode[2] = RobotDouble(ang3);
+}
+
+HalfNode::HalfNode(RobotDouble ang1, RobotDouble ang2, RobotDouble ang3)
+{
+	hnode.resize(3);
 	hnode[0] = ang1;
 	hnode[1] = ang2;
 	hnode[2] = ang3;
 }
 
-
 double HalfNode::get_element(int num)
 {
 	double angle = 0;
 	for (int i = 0; i <= num; ++i) {
-		angle += hnode[i];
+		angle += hnode[i].value();
 	}
 	return angle;
 }
@@ -30,19 +37,30 @@ double HalfNode::get_element(int num)
 Node::Node()
 	:node()
 {
-	node = { 0, 0, 0, 0, 0, 0 };
+	RobotDouble zero(0);
+	node = {zero, zero, zero, zero, zero, zero};
 }
 
 
 Node::Node(double e1, double e2, double e3, double e4, double e5, double e6)
 	: node()
 {
-	node.resize(6);node[0] = e1;	node[1] = e2;	node[2] = e3;
-	node[3] = e4;	node[4] = e5;	node[5] = e6;
+	node.resize(6);
+	node[0] = RobotDouble(e1);	node[1] = RobotDouble(e2);	node[2] = RobotDouble(e3);
+	node[3] = RobotDouble(e4);	node[4] = RobotDouble(e5);	node[5] = RobotDouble(e6);
 }
 
 
 Node::Node(std::vector<double> nd)
+	: node()
+{
+	node.resize(6);
+	node[0] = RobotDouble(nd[0]);node[1] = RobotDouble(nd[1]);node[2] = RobotDouble(nd[2]);
+	node[3] = RobotDouble(nd[3]);node[4] = RobotDouble(nd[4]);node[5] = RobotDouble(nd[5]);
+}
+
+
+Node::Node(std::vector<RobotDouble> nd)
 	: node(nd)
 {
 	assert(nd.size() == 6);
@@ -51,11 +69,15 @@ Node::Node(std::vector<double> nd)
 
 double Node::get_element(int n) 
 {
-	return node[n];
+	return node[n].value();
+}
+void Node::set_element(int dof, double d) 
+{
+	node[dof] = RobotDouble(d);
 }
 double Node::get_element(int n) const
 {
-	return node[n];
+	return node[n].value();
 }
 
 HalfNode Node::get_langles()
@@ -74,12 +96,12 @@ HalfNode Node::get_rangles()
 
 double Node::get_absangle(int index) const
 {
-	if (index == 0)	return node[0];
-	if (index == 1)	return node[0] + node[1];
-	if (index == 2)	return node[0] + node[1] + node[2];
-	if (index == 3)	return node[3];
-	if (index == 4) return node[3] + node[4];
-	if (index == 5)	return node[3] + node[4] + node[5];
+	if (index == 0)	return node[0].value();
+	if (index == 1)	return node[0].value() + node[1].value();
+	if (index == 2)	return node[0].value() + node[1].value() + node[2].value();
+	if (index == 3)	return node[3].value();
+	if (index == 4) return node[3].value() + node[4].value();
+	if (index == 5)	return node[3].value() + node[4].value() + node[5].value();
 	return 999;
 }
 
@@ -88,7 +110,8 @@ double Node::distance(const Node& other)
 {
 	double dist = 0.0;
 	for (int i = 0; i < 6; ++i) {
-		dist += (this->node[i] - other.node[i]) * (this->node[i] - other.node[i]);
+		dist += (this->node[i].value() - other.node[i].value()) 
+		  	  * (this->node[i].value() - other.node[i].value());
 	}
 	return std::sqrt(dist);
 }
@@ -100,8 +123,8 @@ Node Node::normalize(const Node& other)
 	double dist = distance(other);
 	std::vector<double> new_node(6);
 	for (int i = 0; i < Node::dof; ++i) {
-		double trans = (node[i] - other.node[i]) / dist;
-		new_node[i] = other.node[i] + trans;
+		double trans = (node[i].value() - other.node[i].value()) / dist;
+		new_node[i] = other.node[i].value() + trans;
 	}
 
 	return Node(new_node);
@@ -115,54 +138,54 @@ Node Node::unitmove(const Node& other)
 
 	std::vector<double> new_node(6);
 	for (int i = 0; i < Node::dof; ++i) {
-		double trans = (other.node[i] - node[i]) / dist;
-		new_node[i] = node[i] + trans;
+		double trans = (other.node[i].value() - node[i].value()) / dist;
+		new_node[i] = node[i].value() + trans;
 	}
 
-	return new_node;
+	return Node(new_node);
 }
 
 
 Node Node::operator+(const Node& other)	const
 {
-	return Node(node[0] + other.node[0],
-			    node[1] + other.node[1],
-			    node[2] + other.node[2],
-			    node[3] + other.node[3],
-			    node[4] + other.node[4],
-			    node[5] + other.node[5]);
+	return Node(node[0].value() + other.node[0].value(),
+			    node[1].value() + other.node[1].value(),
+			    node[2].value() + other.node[2].value(),
+			    node[3].value() + other.node[3].value(),
+			    node[4].value() + other.node[4].value(),
+			    node[5].value() + other.node[5].value());
 }
 
 Node Node::operator-(const Node& other)	const
 {
-	return Node(node[0] - other.node[0],
-			    node[1] - other.node[1],
-			    node[2] - other.node[2],
-			    node[3] - other.node[3],
-			    node[4] - other.node[4],
-			    node[5] - other.node[5]);
+	return Node(node[0].value() - other.node[0].value(),
+			    node[1].value() - other.node[1].value(),
+			    node[2].value() - other.node[2].value(),
+			    node[3].value() - other.node[3].value(),
+			    node[4].value() - other.node[4].value(),
+			    node[5].value() - other.node[5].value());
 }
 
 Node Node::operator*(int r)	const
 {
-	return Node(r*node[0], r*node[1], r*node[2],
-			    r*node[3], r*node[4], r*node[5]);
+	return Node(r*node[0].value(), r*node[1].value(), r*node[2].value(),
+			    r*node[3].value(), r*node[4].value(), r*node[5].value());
 }
 
 Node operator*(int r, const Node& other)
 {
-	return Node(r*other.node[0], r*other.node[1], r*other.node[2],
-			    r*other.node[3], r*other.node[4], r*other.node[5]);
+	return Node(r*other.node[0].value(), r*other.node[1].value(), r*other.node[2].value(),
+			    r*other.node[3].value(), r*other.node[4].value(), r*other.node[5].value());
 }
 
 double Node::norm(const Node& other)
 {
-	double sqr = (node[0] - other.node[0])*(node[0] - other.node[0]) 
-				+(node[1] - other.node[1])*(node[1] - other.node[1]) 
-				+(node[2] - other.node[2])*(node[2] - other.node[2]) 
-				+(node[3] - other.node[3])*(node[3] - other.node[3]) 
-				+(node[4] - other.node[4])*(node[4] - other.node[4]) 
-				+(node[5] - other.node[5])*(node[5] - other.node[5]);
+	double sqr = (node[0].value()-other.node[0].value())*(node[0].value()-other.node[0].value()) 
+				+(node[1].value()-other.node[1].value())*(node[1].value()-other.node[1].value()) 
+				+(node[2].value()-other.node[2].value())*(node[2].value()-other.node[2].value()) 
+				+(node[3].value()-other.node[3].value())*(node[3].value()-other.node[3].value()) 
+				+(node[4].value()-other.node[4].value())*(node[4].value()-other.node[4].value()) 
+				+(node[5].value()-other.node[5].value())*(node[5].value()-other.node[5].value());
 	return std::sqrt(sqr);
 }
 
@@ -219,4 +242,8 @@ void NodeList::concat(const NodeList& other)
 	for (int i = 0; i < other.size(); ++i) {
 		elm.push_back(other.get(i));
 	}
+}
+
+std::ostream& operator<<(std::ostream& out, const RobotDouble &rd){
+	out << rd.value();	return out;
 }
