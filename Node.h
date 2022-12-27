@@ -16,7 +16,7 @@ struct RobotDouble
 	}
 	RobotDouble(double _val){
 		std::ostringstream oss;
-		oss << std::fixed << std::setprecision(2) << _val;
+		oss << std::fixed << std::setprecision(3) << _val;
 		val = oss.str();
 	}
 
@@ -69,6 +69,7 @@ struct Node
 	double norm(const Node& other);
 };
 
+std::ostream& operator<<(std::ostream& out, const Node &nd);
 
 struct NodeList
 {

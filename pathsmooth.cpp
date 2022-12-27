@@ -41,8 +41,8 @@ NodeList PathSmooth::smooth()
 
 	int cnt = 0, iters_num = 10000;
 	double tolerance = 0.1;
-	double error = 1.0;	// All value is OK except the value lower than 0.1
-	
+	double error = 1.0;	 	
+						
 //	while(error > tolerance || cnt < iters_num){
 	while(cnt < iters_num){
 		PointCloud pre_cfo = init_CFree[index];
@@ -51,7 +51,7 @@ NodeList PathSmooth::smooth()
 		for(int i=1; i<orig_path.size()-1; ++i){
 			NodeList pre_path = opt_path;
 			//opt_path[i] = opt_path[i] - alpha*(opt_path[i] - orig_path[i]);
-			//opt_path[i] = opt_path[i] - beta*(2*opt_path[i] - opt_path[i-1] - opt_path[i+1]);
+			opt_path[i] = opt_path[i] - beta*(2*opt_path[i] - opt_path[i-1] - opt_path[i+1]);
 			for(int n=0; n<Node::dof; ++n){
 				if(opt_path[i].get_element(n) > 90)		opt_path[i].set_element(n, 90);
 				if(opt_path[i].get_element(n) < -90)	opt_path[i].set_element(n, 90);
@@ -64,12 +64,13 @@ NodeList PathSmooth::smooth()
 
 			if(!robot_update(opt_path[i])){
 				opt_path[i] = pre_path[i];
-				break;
+				continue;
 			}
 
 			// caging_valid start
 			DfsCFO dfs;
 			std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, opt_path[i]);
+			std::cout << pre_cfo.size() << std::endl;
 			if((int)cfo_now.size() != 1){
 				opt_path[i] = pre_path[i];
 				std::vector<PointCloud> cfo_org = dfs.extract(pre_cfo, pre_path[i]);
@@ -142,7 +143,7 @@ bool PathSmooth::debug()
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
 
-	for(int i=0; i<6;++i)	std::cout << ini.get_element(i) << ", "; std::cout << std::endl;
+	std::cout << ini << std::endl;
 	std::vector<PointCloud> init_CFree = ics.extract();
 	int num = 0;
 	for (const auto& cls : init_CFree) {
@@ -163,15 +164,17 @@ bool PathSmooth::debug()
 
 	PointCloud pre_cfo = init_CFree[index];
 
-	for(int i=1; i<orig_path.size()-1; ++i){
-		for(int j=0; j<6; ++j)	std::cout << orig_path[i].node[j] << ", ";	std::cout << std::endl;
+	for(int i=1; i<orig_path.size(); ++i){
+		std::cout << orig_path[i] << std::endl;
 		if(!robot_update(orig_path[i])){
+			std::cout << "robot collision" << std::endl;
 			return false;
 		}
 
 		DfsCFO dfs;
 		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, orig_path[i]);
 		if((int)cfo_now.size() != 1){
+			std::cout << "Caging invalid" << std::endl;
 			return false;
 		}
 

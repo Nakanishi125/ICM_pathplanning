@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 		printf("%f[s]\n", sec);
 	
 		path.printIO();
-		path.print_file("rect_connect2");
+		path.print_file("valid3");
 		delete p;
 	}
 

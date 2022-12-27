@@ -208,6 +208,64 @@ bool RevRRT::initialize(Node fin)
 }
 
 
+//bool RevRRT::dfsconfig_valid(Node newnode)
+//{
+//	Controller* controller = Controller::get_instance();
+//
+//	std::vector<PointCloud> prev_cfree_obj = tree.back_parentRRTNode().get_cfree_obj();
+//	std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
+//
+//	std::vector<PointCloud> cfree_obj;
+//	std::vector<PointCloud> del_list;
+//
+//	for(const auto& eo: prev_cfree_obj){
+//		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
+//		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
+//			int flag = 0;
+//			for(const auto& ed: prev_cfree_del){
+//				if((*it).overlap(ed)){
+//					flag = 1;	break;
+//				}
+//			}
+//			if(flag == 1){
+//				del_list.push_back(*it);
+//				it = cfree_obj_tmp.erase(it);
+//			}
+//			else{
+//				++it;
+//			}
+//		}
+//
+//		for(const auto& e : cfree_obj_tmp){
+//			if(duplicate_check(e, cfree_obj))	continue;
+//			cfree_obj.push_back(e);
+//		}
+//	}
+//
+//	
+//	Node parent = tree.back_parentRRTNode().node;
+//	controller->robot_update(parent);
+//	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
+//		std::vector<PointCloud> prev_real_cfree = strategy->extract(*it, parent);
+//		if(prev_real_cfree.size() != 1){
+//			del_list.push_back(*it);
+//			it = cfree_obj.erase(it);
+//		}
+//		else{
+//			++it;
+//		}
+//	}
+//	controller->robot_update(newnode);
+//
+//	if((int)cfree_obj.size() == 0)	return false;
+//	else{
+//		RRTNode validnode(newnode, cfree_obj, del_list);
+//		tree.replace(validnode);
+//		return true;
+//	}
+//}
+
+
 bool RevRRT::dfsconfig_valid(Node newnode)
 {
 	Controller* controller = Controller::get_instance();
@@ -220,21 +278,6 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 
 	for(const auto& eo: prev_cfree_obj){
 		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
-		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
-			int flag = 0;
-			for(const auto& ed: prev_cfree_del){
-				if((*it).overlap(ed)){
-					flag = 1;	break;
-				}
-			}
-			if(flag == 1){
-				del_list.push_back(*it);
-				it = cfree_obj_tmp.erase(it);
-			}
-			else{
-				++it;
-			}
-		}
 
 		for(const auto& e : cfree_obj_tmp){
 			if(duplicate_check(e, cfree_obj))	continue;
@@ -267,8 +310,6 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 
 
 
-
-
 Node RevRRT::sampling(Node Rand)
 {
 	static int loop = 0;
@@ -287,38 +328,42 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
     int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
     bool flag = false;
 
-    for (int i = 0; i < (int)pcs.size(); ++i) {
-        for (int j = 0; j < (int)pcs[i].size(); ++j) {
-            /*if (minx > pcs[i].get(j).x)  minx = pcs[i].get(j).x;
-            if (maxx < pcs[i].get(j).x)  maxx = pcs[i].get(j).x;*/
-            if (miny > pcs[i].get(j).y)  miny = pcs[i].get(j).y;
-            if (maxy < pcs[i].get(j).y)  maxy = pcs[i].get(j).y;
-            if (mint > pcs[i].get(j).th)  mint = pcs[i].get(j).th;
-            if (maxt < pcs[i].get(j).th)  maxt = pcs[i].get(j).th;
-            if (pcs[i].get(j).th == 0)   flag = true;
-        }
-        int widy = (maxy - miny) / 10;
-        int widt = (maxt - mint) / 5;
-        
-        if (flag) {
-            int pmint = INT_MAX, pmaxt = INT_MIN;
-            for (int j = 0; j < (int)pcs[i].size(); ++j) {
-                if (pcs[i].get(j).th < 180) {
-                    if (pcs[i].get(j).th > pmaxt)    pmaxt = pcs[i].get(j).th;
-                }
-                if (pcs[i].get(j).th >= 180) {
-                    if (pcs[i].get(j).th < pmint)    pmint = pcs[i].get(j).th;
-                }
-            }
-            widt = (pmaxt + (360 - pmint)) / 5;
-        }
+//    for (int i = 0; i < (int)pcs.size(); ++i) {
+//        for (int j = 0; j < (int)pcs[i].size(); ++j) {
+//            /*if (minx > pcs[i].get(j).x)  minx = pcs[i].get(j).x;
+//            if (maxx < pcs[i].get(j).x)  maxx = pcs[i].get(j).x;*/
+//            if (miny > pcs[i].get(j).y)  miny = pcs[i].get(j).y;
+//            if (maxy < pcs[i].get(j).y)  maxy = pcs[i].get(j).y;
+//            if (mint > pcs[i].get(j).th)  mint = pcs[i].get(j).th;
+//            if (maxt < pcs[i].get(j).th)  maxt = pcs[i].get(j).th;
+//            if (pcs[i].get(j).th == 0)   flag = true;
+//        }
+//        int widy = (maxy - miny) / 10;
+//        int widt = (maxt - mint) / 5;
+//        
+//        if (flag) {
+//            int pmint = INT_MAX, pmaxt = INT_MIN;
+//            for (int j = 0; j < (int)pcs[i].size(); ++j) {
+//                if (pcs[i].get(j).th < 180) {
+//                    if (pcs[i].get(j).th > pmaxt)    pmaxt = pcs[i].get(j).th;
+//                }
+//                if (pcs[i].get(j).th >= 180) {
+//                    if (pcs[i].get(j).th < pmint)    pmint = pcs[i].get(j).th;
+//                }
+//            }
+//            widt = (pmaxt + (360 - pmint)) / 5;
+//        }
+//
+//        std::cout << "y width: " << widy << std::endl;
+//        std::cout << "theta width: " << widt << std::endl;
+//        if (widy < 8)      return GoalJudge::NotGoal;
+//        if (widt < 25)      return GoalJudge::NotGoal;
+//    }
 
-        std::cout << "y width: " << widy << std::endl;
-        std::cout << "theta width: " << widt << std::endl;
-        if (widy < 8)      return GoalJudge::NotGoal;
-        if (widt < 25)      return GoalJudge::NotGoal;
-    }
-    return GoalJudge::Goal;
+	for(int i=0; i<(int)pcs.size(); ++i){
+		if(pcs[i].size() > 1000)	return GoalJudge::Goal;
+	}
+    return GoalJudge::NotGoal;
 }
 
 
@@ -596,42 +641,48 @@ GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
 
 GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 {
-    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
-    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
-    bool flag = false;
-
-    for (int i = 0; i < (int)cfo.size(); ++i) {
-        for (int j = 0; j < (int)cfo[i].size(); ++j) {
-            /*if (minx > cfo[i].get(j).x)  minx = cfo[i].get(j).x;
-            if (maxx < cfo[i].get(j).x)  maxx = cfo[i].get(j).x;*/
-            if (miny > cfo[i].get(j).y)  miny = cfo[i].get(j).y;
-            if (maxy < cfo[i].get(j).y)  maxy = cfo[i].get(j).y;
-            if (mint > cfo[i].get(j).th)  mint = cfo[i].get(j).th;
-            if (maxt < cfo[i].get(j).th)  maxt = cfo[i].get(j).th;
-            if (cfo[i].get(j).th == 0)   flag = true;
-        }
-        int widy = (maxy - miny) / 10;
-        int widt = (maxt - mint) / 5;
-        
-        if (flag) {
-            int pmint = INT_MAX, pmaxt = INT_MIN;
-            for (int j = 0; j < (int)cfo[i].size(); ++j) {
-                if (cfo[i].get(j).th < 180) {
-                    if (cfo[i].get(j).th > pmaxt)    pmaxt = cfo[i].get(j).th;
-                }
-                if (cfo[i].get(j).th >= 180) {
-                    if (cfo[i].get(j).th < pmint)    pmint = cfo[i].get(j).th;
-                }
-            }
-            widt = (pmaxt + (360 - pmint)) / 5;
-        }
-
-//        std::cout << "y width: " << widy << std::endl;
-//        std::cout << "theta width: " << widt << std::endl;
-        if (widy < 8)      return GoalJudge::NotGoal;
-        if (widt < 18)      return GoalJudge::NotGoal;
-    }
-    return GoalJudge::GGoal;
+//    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
+//    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
+//    bool flag = false;
+//
+//    for (int i = 0; i < (int)cfo.size(); ++i) {
+//        for (int j = 0; j < (int)cfo[i].size(); ++j) {
+//            /*if (minx > cfo[i].get(j).x)  minx = cfo[i].get(j).x;
+//            if (maxx < cfo[i].get(j).x)  maxx = cfo[i].get(j).x;*/
+//            if (miny > cfo[i].get(j).y)  miny = cfo[i].get(j).y;
+//            if (maxy < cfo[i].get(j).y)  maxy = cfo[i].get(j).y;
+//            if (mint > cfo[i].get(j).th)  mint = cfo[i].get(j).th;
+//            if (maxt < cfo[i].get(j).th)  maxt = cfo[i].get(j).th;
+//            if (cfo[i].get(j).th == 0)   flag = true;
+//        }
+//        int widy = (maxy - miny) / 10;
+//        int widt = (maxt - mint) / 5;
+//        
+//        if (flag) {
+//            int pmint = INT_MAX, pmaxt = INT_MIN;
+//            for (int j = 0; j < (int)cfo[i].size(); ++j) {
+//                if (cfo[i].get(j).th < 180) {
+//                    if (cfo[i].get(j).th > pmaxt)    pmaxt = cfo[i].get(j).th;
+//                }
+//                if (cfo[i].get(j).th >= 180) {
+//                    if (cfo[i].get(j).th < pmint)    pmint = cfo[i].get(j).th;
+//                }
+//            }
+//            widt = (pmaxt + (360 - pmint)) / 5;
+//        }
+//
+////        std::cout << "y width: " << widy << std::endl;
+////        std::cout << "theta width: " << widt << std::endl;
+//        if (widy < 8)      return GoalJudge::NotGoal;
+//        if (widt < 18)      return GoalJudge::NotGoal;
+//    }
+//
+//	  return GoalJudge::GGoal;
+	
+	for(int i=0; i<(int)cfo.size(); ++i){
+		if(cfo[i].size() > 1500)	return GoalJudge::GGoal;
+	}
+	return GoalJudge::NotGoal;
 }
 
 

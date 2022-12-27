@@ -194,6 +194,8 @@ double Node::norm(const Node& other)
 
 
 
+
+
 NodeList::NodeList()
 	:elm()
 {}
@@ -247,3 +249,14 @@ void NodeList::concat(const NodeList& other)
 std::ostream& operator<<(std::ostream& out, const RobotDouble &rd){
 	out << rd.value();	return out;
 }
+
+std::ostream& operator<<(std::ostream& out, const Node &nd)
+{
+	out << "[" 
+		<< nd.get_absangle(0) << ", " << nd.get_element(1) << ", "
+	    << nd.get_absangle(2) << ", " << nd.get_element(3) << ", "
+	    << nd.get_absangle(4) << ", " << nd.get_element(5) << "]";
+	return out;
+}
+
+
