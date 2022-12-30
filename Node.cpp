@@ -220,3 +220,12 @@ void NodeList::concat(const NodeList& other)
 		elm.push_back(other.get(i));
 	}
 }
+
+std::ostream& operator<<(std::ostream& out, const Node &nd) 
+{ 
+	out << "["  
+		<< nd.get_element(0) << ", " << nd.get_element(1) << ", " 
+	    << nd.get_element(2) << ", " << nd.get_element(3) << ", " 
+	    << nd.get_element(4) << ", " << nd.get_element(5) << "]"; 
+	return out; 
+}

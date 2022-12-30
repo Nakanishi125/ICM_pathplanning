@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <array>
 
 #include "Shape.h"
 

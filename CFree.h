@@ -84,7 +84,6 @@ public:
 		controller->robot_update(newnode);	
 		// robot condition is updated, below we can use 
 		// no argument function in Controller.h like RintersectS().
-		
 
 		for (int i = 0; i < previous.size(); ++i) {
 			if (previous.get_mk(i) == true)	continue;

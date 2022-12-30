@@ -86,9 +86,11 @@ private:
 	GoalJudge goal_gconf(std::vector<PointCloud> cfo);
 
 	NodeList make_path(GoalJudge flag);
+	NodeList make_path(GoalJudge flag, int sindex, int gindex);
 	bool extend_limit(Node n1, Node n2);
 
 	NodeList path_concat();
+	NodeList path_concat(int sindex, int gindex);
 
 public:
 	RRTConnect();

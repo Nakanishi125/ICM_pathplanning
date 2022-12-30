@@ -135,6 +135,7 @@ NodeList csv_to_nodelist(std::string fn)
 	return nl;
 }
 
+
 bool PathSmooth::debug()
 {
 	Controller* controller = Controller::get_instance();
@@ -142,7 +143,7 @@ bool PathSmooth::debug()
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
 
-	for(int i=0; i<6;++i)	std::cout << ini[i] << ", "; std::cout << std::endl;
+	std::cout << ini << std::endl;
 	std::vector<PointCloud> init_CFree = ics.extract();
 	int num = 0;
 	for (const auto& cls : init_CFree) {
@@ -163,8 +164,8 @@ bool PathSmooth::debug()
 
 	PointCloud pre_cfo = init_CFree[index];
 
-	for(int i=1; i<orig_path.size()-1; ++i){
-		for(int j=0; j<6; ++j)	std::cout << orig_path[i].node[j] << ", ";	std::cout << std::endl;
+	for(int i=1; i<orig_path.size(); ++i){
+		std::cout << orig_path[i] << std::endl;
 		if(!robot_update(orig_path[i])){
 			return false;
 		}
@@ -179,7 +180,3 @@ bool PathSmooth::debug()
 	}
 	return true;
 }
-
-
-
-

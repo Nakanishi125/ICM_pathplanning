@@ -80,4 +80,6 @@ public:
 	int get_now_index();
 
 	NodeList generate_path();
+	NodeList generate_path(int end_index);
+
 };

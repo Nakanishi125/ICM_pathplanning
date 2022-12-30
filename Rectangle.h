@@ -12,7 +12,7 @@ class Rectangle : public Shape
 {
 private:
 	const double short_side, long_side;
-	const int sym_angle;
+//	const int sym_angle;
 	Polygon poly;
 
 public:
@@ -21,7 +21,7 @@ public:
 	Polygon get_poly();
 	void update(State3D pos);
 	double getRadius();
-	int get_symangle();
+//	int get_symangle();
 	MultiSquare get_square();
 };
 

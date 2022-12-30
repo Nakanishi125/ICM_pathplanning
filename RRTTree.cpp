@@ -267,4 +267,26 @@ NodeList RRTTree::generate_path()
 }
 
 
+NodeList RRTTree::generate_path(int end_index)
+{
+	NodeList path;
+	std::vector<int> ord = nl.nodenum_order(end_index);
+
+	for(const auto& e: ord){
+		path.push_back(graph[e].getNode());
+	}
+
+	path.reverse();
+	return path;
+}
+
+
+
+
+
+
+
+
+
+
 
