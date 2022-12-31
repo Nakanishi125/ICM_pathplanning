@@ -105,10 +105,10 @@ void TaskSet::object()
 	ptree pt;
 
 	int type = 0;
-	int maxi = 3;
+	int maxi = 4;
 	do {
 		std::cout << "Choose object:" << std::endl;
-		std::cout << "(Rectangle -> 1 , LShape -> 2 , Triangle -> 3): ";
+		std::cout << "(Rectangle -> 1 , LShape -> 2 , Triangle -> 3, TShape -> 4): ";
 
 		std::cin >> type;
 	} while (type <= 0 || type > maxi);
@@ -129,6 +129,12 @@ void TaskSet::object()
 	pt.put("Triangle.edge2", 100);
 	pt.put("Triangle.edge3", 100);
 	pt.put("Triangle.symmetry", 120);
+
+	pt.put("TShape.long_side", 150);
+	pt.put("TShape.short_side", 100);
+	pt.put("TShape.long_pro", 40);
+	pt.put("TShape.short_pro", 40);
+	pt.put("TShape.symmetry", 360);
 
 	write_ini("config/ObjectParameter.ini", pt);
 	std::cout << std::endl;

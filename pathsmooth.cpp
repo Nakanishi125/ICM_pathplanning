@@ -165,7 +165,7 @@ bool PathSmooth::debug()
 	PointCloud pre_cfo = init_CFree[index];
 
 	for(int i=1; i<orig_path.size(); ++i){
-		std::cout << orig_path[i] << std::endl;
+		std::cout << i << ": " << orig_path[i] << std::endl;
 		if(!robot_update(orig_path[i])){
 			return false;
 		}

@@ -119,10 +119,10 @@ GoalJudge RRT::goal_judge(State3D goal)
 
     std::cout << "max distance:" << max_dist << std::endl;
 
-    if (!contain_yth(pc, goal)) {
-        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
-        return GoalJudge::NotGoal;
-    }
+//    if (!contain_yth(pc, goal)) {
+//        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
+//        return GoalJudge::NotGoal;
+//    }
 
     if (max_dist > threshold)    return GoalJudge::MiddleGoal;
     else                         return GoalJudge::Goal;
@@ -365,7 +365,7 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 	static int maxi = 0;
 	for(int i=0; i<(int)pcs.size(); ++i){
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
-		if(pcs[i].size() > 1000)	{
+		if(pcs[i].size() > 1800)	{
 			return GoalJudge::Goal;
 		}
 	}
@@ -391,7 +391,7 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	while(1)
 	{
 		static int i = 0;	++i;
-		if(i>200000)	exit(5963);
+		//if(i>200000)	exit(5963);
 		
 		// Random sampling and format
 		Node Rand = generate_newnode();
@@ -946,8 +946,8 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 void rand_init()
 {
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
-	//std::srand((unsigned int)seed);
-	std::srand(600);
+	std::srand((unsigned int)seed);
+	//std::srand(600);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 
