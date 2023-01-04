@@ -6,6 +6,7 @@
 #include "CFreeICS.h"
 #include "Robot.h"
 #include "CFree.h"
+#include "pathsmooth.h"
 
 
 int origin = -1;
@@ -129,6 +130,41 @@ GoalJudge RRT::goal_judge(State3D goal)
 }
 
 
+bool RRT::debug()
+{
+	std::string fn;
+	std::cin >> fn;
+	fn = "path/" + fn + ".csv";
+	NodeList nl = csv_to_nodelist(fn);
+	Node ini = nl[0];
+
+	if (!initialize(ini)) {
+		std::cout << "Invalid initial value was given." << std::endl;
+		return false;
+	}
+
+	for(int i=1; i<nl.size(); ++i)	
+	{
+		Node newnode = nl[i]; 
+		tree.push_back(newnode, i-1);
+		std::cout << newnode << std::endl;
+
+		// Validation
+		if (!robot_update(newnode)){
+			tree.pop_back();
+			return false;
+		}
+		if (!dfsconfig_valid(newnode)){
+			tree.pop_back();
+			return false;
+		}
+
+	}
+
+	return true;
+}
+
+
 RRT::RRT()
 	:tree(), garound(), strategy(new DfsCFO()), 
   	threshold(read_threshold())
@@ -212,7 +248,7 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 	Controller* controller = Controller::get_instance();
 
 	std::vector<PointCloud> prev_cfree_obj = tree.back_parentRRTNode().get_cfree_obj();
-	std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
+	//std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
 
 	std::vector<PointCloud> cfree_obj;
 	std::vector<PointCloud> del_list;
@@ -241,12 +277,19 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 	}
 	controller->robot_update(newnode);
 
-	if((int)cfree_obj.size() == 0)	return false;
-	else{
-		RRTNode validnode(newnode, cfree_obj, del_list);
+//	if((int)cfree_obj.size() == 0)	return false;
+//	else{
+//
+//		RRTNode validnode(newnode, cfree_obj, del_list);
+//		tree.replace(validnode);
+//		return true;
+//	}
+	if((int)cfree_obj.size() == 1){
+		RRTNode validnode(newnode, cfree_obj[0]);
 		tree.replace(validnode);
 		return true;
 	}
+	else	return false;
 }
 
 
@@ -316,8 +359,7 @@ Node RevRRT::sampling(Node Rand)
 	static int loop = 0;
 	loop++;
 	Node newnode = tree.format(Rand);
-	std::cout << loop << ": ";
-	for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
+	std::cout << loop << ": " << newnode << std::endl;
 
 	return newnode;
 }
@@ -365,7 +407,11 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 	static int maxi = 0;
 	for(int i=0; i<(int)pcs.size(); ++i){
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
-		if(pcs[i].size() > 1800)	{
+		if(pcs[i].size() > 900){
+			std::cout << "num: " << pcs[i].size() << std::endl;
+			CFreeICS ics(tree.get_RRTNode(tree.get_now_index()).getNode());
+			std::vector<PointCloud> pcs = ics.extract();
+			for(int n=0; n<pcs.size(); ++n)	std::cout << pcs[n].size() << ", ";std::cout << std::endl;
 			return GoalJudge::Goal;
 		}
 	}

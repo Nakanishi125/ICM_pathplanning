@@ -38,6 +38,7 @@ private:
 public:
 	RRT();
 	NodeList plan(Node ini, Node fin, State3D goal);
+	bool debug();
 };
 
 
