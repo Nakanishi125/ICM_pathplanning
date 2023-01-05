@@ -262,7 +262,6 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 		}
 	}
 
-	
 	Node parent = tree.back_parentRRTNode().node;
 	controller->robot_update(parent);
 	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
@@ -285,6 +284,9 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 //		return true;
 //	}
 	if((int)cfree_obj.size() == 1){
+		DfsCFO dfs;
+		std::vector<PointCloud> pcs = dfs.extract(cfree_obj[0], parent);
+		assert(pcs.size() == 1);
 		RRTNode validnode(newnode, cfree_obj[0]);
 		tree.replace(validnode);
 		return true;
@@ -409,9 +411,6 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
 		if(pcs[i].size() > 900){
 			std::cout << "num: " << pcs[i].size() << std::endl;
-			CFreeICS ics(tree.get_RRTNode(tree.get_now_index()).getNode());
-			std::vector<PointCloud> pcs = ics.extract();
-			for(int n=0; n<pcs.size(); ++n)	std::cout << pcs[n].size() << ", ";std::cout << std::endl;
 			return GoalJudge::Goal;
 		}
 	}
@@ -459,6 +458,19 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	
 	NodeList path = tree.generate_path();
 	path.reverse();
+	
+	PointCloud pre_cfo = tree.back_RRTNode().get_cfree_obj()[0];
+	for(int i=0; i<path.size(); ++i){
+		Node check = path.get(i);
+		std::cout << check << std::endl;
+		if(!robot_update(check))	assert(false);
+		
+		DfsCFO dfs;
+		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, check);
+		if((int)cfo_now.size() != 1)	assert(false);
+
+		pre_cfo = cfo_now[0];
+	}
 	return path;
 }
 
@@ -511,7 +523,8 @@ bool RRTConnect::sconf_update()
 		s_tree.pop_back();
 		return false;
 	}
-
+	
+	assert(s_tree.back_RRTNode().get_cfree_obj().size() == 1);	
 	return true;
 }
 
@@ -527,7 +540,7 @@ bool RRTConnect::gconf_update()
 		g_tree.pop_back();
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -809,9 +822,9 @@ GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 	static int maxi = 0;
 	for(int i=0; i<(int)cfo.size(); ++i){
 		if(maxi < cfo[i].size())	maxi = cfo[i].size();
-		if(cfo[i].size() > 500)	return GoalJudge::GGoal;
+		if(cfo[i].size() > 1000)	return GoalJudge::GGoal;
 	}
-	std::cout << "Maxi: " << maxi << std::endl;
+//	std::cout << "Maxi: " << maxi << std::endl;
 	return GoalJudge::NotGoal;
 
 }
@@ -993,7 +1006,7 @@ void rand_init()
 {
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
 	std::srand((unsigned int)seed);
-	//std::srand(600);
+	//std::srand(38745);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 

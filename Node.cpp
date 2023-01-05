@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <cassert>
 #include <fstream>
 
@@ -94,7 +95,7 @@ double Node::distance(const Node& other)
 }
 
 
-// other‚Æ‚Ì‹——£‚ª1‚É‚È‚é‚æ‚¤‚É*this‚ğ“®‚©‚·Cother‚ÍŒÅ’è
+// otherï¿½Æ‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½É‚È‚ï¿½æ‚¤ï¿½ï¿½*thisï¿½ğ“®‚ï¿½ï¿½ï¿½ï¿½Cotherï¿½ÍŒÅ’ï¿½
 Node Node::normalize(const Node& other)
 {
 	double dist = distance(other);
@@ -182,9 +183,10 @@ void NodeList::push_back(Node add_node)
 
 void NodeList::printIO()
 {
+	std::cout << std::fixed;
 	for (int i = 0; i < (int)elm.size(); ++i) {
 		for (int dof = 0; dof < 6; ++dof) {
-			std::cout << elm[i].get_element(dof) << ", ";
+			std::cout << std::setprecision(5) << elm[i].get_element(dof) << ", ";
 		}
 		std::cout << std::endl;
 	}
