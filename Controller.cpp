@@ -5,6 +5,7 @@
 #include "Controller.h"
 #include "Rectangle.h"
 #include "LShape.h"
+#include "TShape.h"
 
 namespace bp = boost::property_tree;
 Controller* Controller::instance = nullptr;
@@ -19,6 +20,7 @@ Shape* Controller::shape_create()
 	int sh = carrier.get();
 	if(sh == 1)	return new Rectangle;
 	if(sh == 2) return new LShape;
+	if(sh == 4) return new TShape;
 
 	assert(true);
 	return 0;

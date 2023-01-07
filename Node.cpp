@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include <cassert>
 #include <fstream>
 
@@ -182,9 +183,10 @@ void NodeList::push_back(Node add_node)
 
 void NodeList::printIO()
 {
+	std::cout << std::fixed;
 	for (int i = 0; i < (int)elm.size(); ++i) {
 		for (int dof = 0; dof < 6; ++dof) {
-			std::cout << elm[i].get_element(dof) << ", ";
+			std::cout << std::setprecision(5) << elm[i].get_element(dof) << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -219,4 +221,13 @@ void NodeList::concat(const NodeList& other)
 	for (int i = 0; i < other.size(); ++i) {
 		elm.push_back(other.get(i));
 	}
+}
+
+std::ostream& operator<<(std::ostream& out, const Node &nd) 
+{ 
+	out << "["  
+		<< nd.get_element(0) << ", " << nd.get_element(1) << ", " 
+	    << nd.get_element(2) << ", " << nd.get_element(3) << ", " 
+	    << nd.get_element(4) << ", " << nd.get_element(5) << "]"; 
+	return out; 
 }

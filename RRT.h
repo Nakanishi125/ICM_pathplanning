@@ -26,7 +26,7 @@ private:
 
 	void set_strategy(CFO* cfo);
 	bool initialize(Node ini);
-//	bool config_valid(Node newnode);
+	bool config_valid(Node newnode);
 	bool dfsconfig_valid(Node newnode);
 
 	Node sampling(Node Rand);
@@ -38,6 +38,7 @@ private:
 public:
 	RRT();
 	NodeList plan(Node ini, Node fin, State3D goal);
+	bool debug();
 };
 
 
@@ -53,7 +54,7 @@ private:
 //	bool config_valid(Node newnode);
 	bool dfsconfig_valid(Node newnode);
 
-
+	void set_strategy(CFO* cfo);
 	Node sampling(Node Rand);
 
 	GoalJudge goal_judge(std::vector<PointCloud> pcs);
@@ -86,9 +87,11 @@ private:
 	GoalJudge goal_gconf(std::vector<PointCloud> cfo);
 
 	NodeList make_path(GoalJudge flag);
+	NodeList make_path(GoalJudge flag, int sindex, int gindex);
 	bool extend_limit(Node n1, Node n2);
 
 	NodeList path_concat();
+	NodeList path_concat(int sindex, int gindex);
 
 public:
 	RRTConnect();

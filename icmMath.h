@@ -4,6 +4,7 @@
 #include <math.h>
 #include <cmath>
 #include <cfloat>
+#include <fstream>
 
 class Point2D
 {
@@ -253,7 +254,6 @@ template <typename T>
 inline Point2D operator+(Point2D& p, Vector2D<T>& v) {
 	return Point2D(p.x + v.x, p.y + v.y);
 }
-
 
 double deg_to_rad(double deg);
 double rad_to_deg(double rad);

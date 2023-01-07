@@ -44,6 +44,7 @@ struct Node
 	double norm(const Node& other);
 };
 
+std::ostream& operator<<(std::ostream& out, const Node &nd);
 
 struct NodeList
 {

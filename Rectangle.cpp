@@ -4,8 +4,8 @@ namespace bp = boost::property_tree;
 
 Rectangle::Rectangle()
 	: short_side(70),
-	  long_side(100),
-	  sym_angle(180)
+	  long_side(100)
+//	  sym_angle(180)
 {
 }
 
@@ -42,10 +42,10 @@ double Rectangle::getRadius()
 }
 
 
-int Rectangle::get_symangle()
-{
-	return sym_angle;
-}
+//int Rectangle::get_symangle()
+//{
+//	return sym_angle;
+//}
 
 
 

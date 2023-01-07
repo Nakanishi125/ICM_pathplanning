@@ -65,8 +65,6 @@ private:
 	{
 		c_dfs.clear();
 		c_dfs.shrink_to_fit();
-		c_del.clear();
-		c_del.shrink_to_fit();
 		target.init();
 		previous.init();
 		cancel = false;
@@ -74,7 +72,7 @@ private:
 
 public:
 	DfsCFO()
-		:c_dfs(), c_del(), target(), cancel(false)
+		:c_dfs(), target(), cancel(false)
 	{
 	}
 	~DfsCFO(){}
@@ -90,19 +88,23 @@ public:
 
 		for (int i = 0; i < previous.size(); ++i) {
 			if (previous.get_mk(i) == true)	continue;
+
 			previous.toTrue(i);		// Change the state to "True", 
 									// which means the point has been explored.
-
-			target.init();
 									
 			controller->shape_update(previous.get_pt(i));
-			if (controller->RintersectS())	continue;
-			if (controller->WintersectS())	continue;
+			if (controller->RintersectS()) {
+				continue;
+			}
+			if (controller->WintersectS()) {
+				continue;
+			}
 
 			c_dfs.resize(c_dfs.size() + 1);
 			int index = target.coord_to_index(previous.get_pt(i));
 			target.toTrue(index);
 			c_dfs.back().push(previous.get_pt(i));
+			cancel = false;
 			explore2(previous.get_pt(i));
 		}
 
@@ -133,20 +135,13 @@ public:
 
 			if (!preprocess(orig))	continue;
 			if (edge_judge(orig)) {
-				c_del.push_back(c_dfs.back());
-				c_dfs.pop_back();
-				return;
+				cancel = true;
+				continue;
 			}
 
 			controller->shape_update(orig);	// shape is updated
 			if (controller->RintersectS())	continue;
 			if (controller->WintersectS())	continue;
-
-			if(cdel_judge(orig)){
-				c_del.push_back(c_dfs.back());
-				c_dfs.pop_back();
-				return;
-			}
 
 			c_dfs.back().push(orig);
 			stack.emplace(orig);
@@ -184,26 +179,21 @@ public:
 						//}
 						//
 				/////////////////////////////////////////////////////////////////////////////////////////
-						
-						c_del.push_back(c_dfs.back());
-						c_dfs.pop_back();
-						return;
+						cancel = true;
+						continue;
 					}
 
 					controller->shape_update(next);	// shape is updated
 					if (controller->RintersectS())	continue;
 					if (controller->WintersectS())	continue;
 
-					if(cdel_judge(next)){
-						c_del.push_back(c_dfs.back());
-						c_dfs.pop_back();
-						return;
-					}
 					c_dfs.back().push(next);
 					stack.emplace(next);
 				}
 			}
 		}
+		
+		if(cancel)	c_dfs.pop_back();
 	}
 
 	State3D move(State3D pt, int dir)
@@ -256,16 +246,6 @@ public:
 	PointCloud get_cfree_obj()
 	{
 		return c_dfs[0];
-	}
-
-//	To judge whether 'st' is a part of c_del or not.
-//	If 'st' is a part, return true
-	bool cdel_judge(State3D st)
-	{
-		for(int i=0; i<c_del.size(); ++i){
-			if(c_del[i].exist(st))	return true;
-		}
-		return false;
 	}
 
 //	void adjacent_check(PointMarkCloud& pmc)

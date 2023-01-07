@@ -1,0 +1,24 @@
+#pragma once
+
+#include <cmath>
+
+#include "Shape.h"
+
+
+class TShape : public Shape
+{
+private:
+	double long_side, short_side, long_pro, short_pro;
+	int sym_angle;
+	Polygon poly;
+
+public:
+	TShape();
+
+	Polygon get_poly();
+	void update(State3D pos);
+	double getRadius();
+	int get_symangle();
+	MultiSquare get_square();
+
+};

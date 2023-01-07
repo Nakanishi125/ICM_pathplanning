@@ -6,6 +6,7 @@
 #include "CFreeICS.h"
 #include "Robot.h"
 #include "CFree.h"
+#include "pathsmooth.h"
 
 
 int origin = -1;
@@ -119,13 +120,47 @@ GoalJudge RRT::goal_judge(State3D goal)
 
     std::cout << "max distance:" << max_dist << std::endl;
 
-    if (!contain_yth(pc, goal)) {
-        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
-        return GoalJudge::NotGoal;
-    }
+//    if (!contain_yth(pc, goal)) {
+//        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
+//        return GoalJudge::NotGoal;
+//    }
 
     if (max_dist > threshold)    return GoalJudge::MiddleGoal;
     else                         return GoalJudge::Goal;
+}
+
+
+bool RRT::config_valid(Node newnode)
+{
+	std::string fn = "log.txt";
+	std::ofstream ofs(fn, std::ios::app);
+
+	set_strategy(new DfsCFO());
+	std::vector<PointCloud> cfo = strategy->extract(tree.back_parentRRTNode().pc(), newnode);
+	for(int i=0; i<cfo.size(); ++i){
+		ofs << cfo[i] << std::endl;
+	}
+	set_strategy(new RasterCFO());
+	std::vector<PointCloud> cfo2 = strategy->extract(tree.back_parentRRTNode().pc(), newnode);
+	for(int i=0; i<cfo2.size(); ++i){
+		ofs << cfo2[i] << std::endl;
+	}
+
+	std::cout << cfo.size() << ", " << cfo2.size() << std::endl;
+	assert(cfo.size() == cfo2.size());
+
+	if((int)cfo.size() == 1){
+		std::cout << cfo[0].size() << ", " << cfo2[0].size() << std::endl;
+
+		assert(cfo[0].size() == cfo2[0].size());
+		RRTNode validnode(newnode, cfo[0]);
+		tree.replace(validnode);
+		return true;
+	}
+	else {
+		return false;
+	}
+	
 }
 
 
@@ -146,6 +181,8 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 		return NodeList();
 	}
 	auto start = std::chrono::system_clock::now();
+	std::string fn = "log.txt";
+	std::ofstream ofs(fn, std::ios::app);
 
 	while (1)
 	{
@@ -155,6 +192,7 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
+		ofs << newnode << std::endl;
 
 		// Validation
 		if (!robot_update(newnode)){
@@ -184,6 +222,11 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 // ===============================================================================
 
 
+void RevRRT::set_strategy(CFO* cfo)
+{
+	strategy = cfo;
+}
+
 bool RevRRT::initialize(Node fin)
 {
 	tree.push_back(fin, origin);
@@ -207,42 +250,35 @@ bool RevRRT::initialize(Node fin)
 	return true;
 }
 
-
 bool RevRRT::dfsconfig_valid(Node newnode)
 {
 	Controller* controller = Controller::get_instance();
 
 	std::vector<PointCloud> prev_cfree_obj = tree.back_parentRRTNode().get_cfree_obj();
-	std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
+	//std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
 
 	std::vector<PointCloud> cfree_obj;
 	std::vector<PointCloud> del_list;
 
+	int debug = 0;
+	if(debug == 1)	set_strategy(new RasterCFO());
 	for(const auto& eo: prev_cfree_obj){
 		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
-		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
-			int flag = 0;
-			for(const auto& ed: prev_cfree_del){
-				if((*it).overlap(ed)){
-					flag = 1;	break;
-				}
-			}
-			if(flag == 1){
-				del_list.push_back(*it);
-				it = cfree_obj_tmp.erase(it);
-			}
-			else{
-				++it;
-			}
-		}
 
 		for(const auto& e : cfree_obj_tmp){
-			if(duplicate_check(e, cfree_obj))	continue;
+			//if(duplicate_check(e, cfree_obj))	continue;
+			bool flag = false;
+			for(int i=0; i<cfree_obj.size(); ++i){
+				if(cfree_obj[i].overlap(e)){	
+					flag = true;
+					break;
+				}
+			}
+			if(flag)	continue;	
 			cfree_obj.push_back(e);
 		}
 	}
 
-	
 	Node parent = tree.back_parentRRTNode().node;
 	controller->robot_update(parent);
 	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
@@ -256,14 +292,103 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 		}
 	}
 	controller->robot_update(newnode);
+	
+	std::string fn = "log.txt";
+	std::ofstream ofs(fn, std::ios::app);
+	for(int i=0; i<cfree_obj.size(); ++i){
+		ofs << cfree_obj[i] << std::endl;
+	}
+	ofs << std::endl;
+
+	bool flag = false;
+	if(flag){
+	CFreeICS ics(newnode);
+	std::vector<PointCloud> pcs = ics.extract();
+	}
 
 	if((int)cfree_obj.size() == 0)	return false;
 	else{
+
 		RRTNode validnode(newnode, cfree_obj, del_list);
 		tree.replace(validnode);
 		return true;
 	}
+
+//	if((int)cfree_obj.size() == 1){
+//		CFreeICS ics(newnode);
+//		std::vector<PointCloud> pcs = ics.extract();
+//		bool flag = false;
+//		for(int i=0; i<pcs.size(); ++i){
+//			if(cfree_obj[0].size() == pcs[i].size())	flag = true;
+//		}
+//		if(flag == false){
+//			assert(false);
+//		}
+		
+//		RRTNode validnode(newnode, cfree_obj[0]);
+//		tree.replace(validnode);
+//		return true;
+//	}
+//	else	return false;
 }
+
+
+//bool RevRRT::dfsconfig_valid(Node newnode)
+//{
+//	Controller* controller = Controller::get_instance();
+//
+//	std::vector<PointCloud> prev_cfree_obj = tree.back_parentRRTNode().get_cfree_obj();
+//	std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
+//
+//	std::vector<PointCloud> cfree_obj;
+//	std::vector<PointCloud> del_list;
+//
+//	for(const auto& eo: prev_cfree_obj){
+//		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
+//		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
+//			int flag = 0;
+//			for(const auto& ed: prev_cfree_del){
+//				if((*it).overlap(ed)){
+//					flag = 1;	break;
+//				}
+//			}
+//			if(flag == 1){
+//				del_list.push_back(*it);
+//				it = cfree_obj_tmp.erase(it);
+//			}
+//			else{
+//				++it;
+//			}
+//		}
+//
+//		for(const auto& e : cfree_obj_tmp){
+//			if(duplicate_check(e, cfree_obj))	continue;
+//			cfree_obj.push_back(e);
+//		}
+//	}
+//
+//	
+//	Node parent = tree.back_parentRRTNode().node;
+//	controller->robot_update(parent);
+//	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
+//		std::vector<PointCloud> prev_real_cfree = strategy->extract(*it, parent);
+//		if(prev_real_cfree.size() != 1){
+//			del_list.push_back(*it);
+//			it = cfree_obj.erase(it);
+//		}
+//		else{
+//			++it;
+//		}
+//	}
+//	controller->robot_update(newnode);
+//
+//	if((int)cfree_obj.size() == 0)	return false;
+//	else{
+//		RRTNode validnode(newnode, cfree_obj, del_list);
+//		tree.replace(validnode);
+//		return true;
+//	}
+//}
 
 
 
@@ -274,8 +399,7 @@ Node RevRRT::sampling(Node Rand)
 	static int loop = 0;
 	loop++;
 	Node newnode = tree.format(Rand);
-	std::cout << loop << ": ";
-	for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
+	std::cout << loop << ": " << newnode << std::endl;
 
 	return newnode;
 }
@@ -283,42 +407,53 @@ Node RevRRT::sampling(Node Rand)
 
 GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 {
-    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
-    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
-    bool flag = false;
+//    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
+//    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
+//    bool flag = false;
+//
+//    for (int i = 0; i < (int)pcs.size(); ++i) {
+//        for (int j = 0; j < (int)pcs[i].size(); ++j) {
+//            /*if (minx > pcs[i].get(j).x)  minx = pcs[i].get(j).x;
+//            if (maxx < pcs[i].get(j).x)  maxx = pcs[i].get(j).x;*/
+//            if (miny > pcs[i].get(j).y)  miny = pcs[i].get(j).y;
+//            if (maxy < pcs[i].get(j).y)  maxy = pcs[i].get(j).y;
+//            if (mint > pcs[i].get(j).th)  mint = pcs[i].get(j).th;
+//            if (maxt < pcs[i].get(j).th)  maxt = pcs[i].get(j).th;
+//            if (pcs[i].get(j).th == 0)   flag = true;
+//        }
+//        int widy = (maxy - miny) / 10;
+//        int widt = (maxt - mint) / 5;
+//        
+//        if (flag) {
+//            int pmint = INT_MAX, pmaxt = INT_MIN;
+//            for (int j = 0; j < (int)pcs[i].size(); ++j) {
+//                if (pcs[i].get(j).th < 180) {
+//                    if (pcs[i].get(j).th > pmaxt)    pmaxt = pcs[i].get(j).th;
+//                }
+//                if (pcs[i].get(j).th >= 180) {
+//                    if (pcs[i].get(j).th < pmint)    pmint = pcs[i].get(j).th;
+//                }
+//            }
+//            widt = (pmaxt + (360 - pmint)) / 5;
+//        }
+//
+//        std::cout << "y width: " << widy << std::endl;
+//        std::cout << "theta width: " << widt << std::endl;
+//        if (widy < 8)      return GoalJudge::NotGoal;
+//        if (widt < 25)      return GoalJudge::NotGoal;
+//    }
+//    return GoalJudge::Goal;
 
-    for (int i = 0; i < (int)pcs.size(); ++i) {
-        for (int j = 0; j < (int)pcs[i].size(); ++j) {
-            /*if (minx > pcs[i].get(j).x)  minx = pcs[i].get(j).x;
-            if (maxx < pcs[i].get(j).x)  maxx = pcs[i].get(j).x;*/
-            if (miny > pcs[i].get(j).y)  miny = pcs[i].get(j).y;
-            if (maxy < pcs[i].get(j).y)  maxy = pcs[i].get(j).y;
-            if (mint > pcs[i].get(j).th)  mint = pcs[i].get(j).th;
-            if (maxt < pcs[i].get(j).th)  maxt = pcs[i].get(j).th;
-            if (pcs[i].get(j).th == 0)   flag = true;
-        }
-        int widy = (maxy - miny) / 10;
-        int widt = (maxt - mint) / 5;
-        
-        if (flag) {
-            int pmint = INT_MAX, pmaxt = INT_MIN;
-            for (int j = 0; j < (int)pcs[i].size(); ++j) {
-                if (pcs[i].get(j).th < 180) {
-                    if (pcs[i].get(j).th > pmaxt)    pmaxt = pcs[i].get(j).th;
-                }
-                if (pcs[i].get(j).th >= 180) {
-                    if (pcs[i].get(j).th < pmint)    pmint = pcs[i].get(j).th;
-                }
-            }
-            widt = (pmaxt + (360 - pmint)) / 5;
-        }
-
-        std::cout << "y width: " << widy << std::endl;
-        std::cout << "theta width: " << widt << std::endl;
-        if (widy < 8)      return GoalJudge::NotGoal;
-        if (widt < 25)      return GoalJudge::NotGoal;
-    }
-    return GoalJudge::Goal;
+	static int maxi = 0;
+	for(int i=0; i<(int)pcs.size(); ++i){
+		if(maxi < pcs[i].size())	maxi = pcs[i].size();
+		if(pcs[i].size() > 400){
+			std::cout << "num: " << pcs[i].size() << std::endl;
+			return GoalJudge::Goal;
+		}
+	}
+	std::cout << "Maxi: " << maxi << std::endl;
+	return GoalJudge::NotGoal;
 }
 
 
@@ -335,15 +470,18 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 		std::cout << "Invalid initial value was given." << std::endl;
 		return NodeList();
 	}
-
+	
+	std::string fn = "log.txt";
+	std::ofstream ofs(fn, std::ios::app);
 	while(1)
 	{
 		static int i = 0;	++i;
-		if(i>200000)	exit(5963);
+		//if(i>200000)	exit(5963);
 		
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
+		ofs << newnode << std::endl;
 
 		// Validation
 		if(!robot_update(newnode)){
@@ -361,6 +499,25 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	
 	NodeList path = tree.generate_path();
 	path.reverse();
+
+	ofs << std::endl << std::endl << "Debug time!" << std::endl;
+	PointCloud pre_cfo = tree.back_RRTNode().get_cfree_obj()[0];
+	for(int i=1; i<path.size(); ++i){
+		Node check = path.get(i);
+		std::cout << check << std::endl;
+		ofs << check << std::endl;
+		if(!robot_update(check))	assert(false);
+		
+		DfsCFO dfs;
+		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, check);
+		for(int i=0; i<cfo_now.size(); ++i){
+			ofs << cfo_now[i] << std::endl;
+		}
+		ofs << std::endl;
+		if((int)cfo_now.size() != 1)	assert(false);
+
+		pre_cfo = cfo_now[0];
+	}
 	return path;
 }
 
@@ -413,7 +570,8 @@ bool RRTConnect::sconf_update()
 		s_tree.pop_back();
 		return false;
 	}
-
+	
+	assert(s_tree.back_RRTNode().get_cfree_obj().size() == 1);	
 	return true;
 }
 
@@ -429,7 +587,7 @@ bool RRTConnect::gconf_update()
 		g_tree.pop_back();
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -478,8 +636,7 @@ bool RRTConnect::caging_validation_sconf(Node node)
 	}
 }
 
-
-bool RRTConnect::caging_validation_gconf(Node node)
+bool RRTConnect::caging_validation_gconf(Node newnode)
 {
 	Controller* controller = Controller::get_instance();
 
@@ -490,22 +647,7 @@ bool RRTConnect::caging_validation_gconf(Node node)
 	std::vector<PointCloud> del_list;
 
 	for(const auto& eo: prev_cfree_obj){
-		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, node);
-		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
-			int flag = 0;
-			for(const auto& ed: prev_cfree_del){
-				if((*it).overlap(ed)){
-					flag = 1;	break;
-				}
-			}
-			if(flag == 1){
-				del_list.push_back(*it);
-				it = cfree_obj_tmp.erase(it);
-			}
-			else{
-				++it;
-			}
-		}
+		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
 
 		for(const auto& e : cfree_obj_tmp){
 			if(duplicate_check(e, cfree_obj))	continue;
@@ -513,7 +655,6 @@ bool RRTConnect::caging_validation_gconf(Node node)
 		}
 	}
 
-	
 	Node parent = g_tree.back_parentRRTNode().node;
 	controller->robot_update(parent);
 	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
@@ -526,15 +667,73 @@ bool RRTConnect::caging_validation_gconf(Node node)
 			++it;
 		}
 	}
-	controller->robot_update(node);
+	controller->robot_update(newnode);
 
 	if((int)cfree_obj.size() == 0)	return false;
 	else{
-		RRTNode validnode(node, cfree_obj, del_list);
+		RRTNode validnode(newnode, cfree_obj, del_list);
 		g_tree.replace(validnode);
 		return true;
 	}
 }
+
+//bool RRTConnect::caging_validation_gconf(Node node)
+//{
+//	Controller* controller = Controller::get_instance();
+//
+//	std::vector<PointCloud> prev_cfree_obj = g_tree.back_parentRRTNode().get_cfree_obj();
+//	std::vector<PointCloud> prev_cfree_del = g_tree.back_parentRRTNode().get_cfree_del();
+//
+//	std::vector<PointCloud> cfree_obj;
+//	std::vector<PointCloud> del_list;
+//
+//	for(const auto& eo: prev_cfree_obj){
+//		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, node);
+//		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
+//			int flag = 0;
+//			for(const auto& ed: prev_cfree_del){
+//				if((*it).overlap(ed)){
+//					flag = 1;	break;
+//				}
+//			}
+//			if(flag == 1){
+//				del_list.push_back(*it);
+//				it = cfree_obj_tmp.erase(it);
+//			}
+//			else{
+//				++it;
+//			}
+//		}
+//
+//		for(const auto& e : cfree_obj_tmp){
+//			if(duplicate_check(e, cfree_obj))	continue;
+//			cfree_obj.push_back(e);
+//		}
+//	}
+//
+//	
+//	Node parent = g_tree.back_parentRRTNode().node;
+//	controller->robot_update(parent);
+//	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
+//		std::vector<PointCloud> prev_real_cfree = strategy->extract(*it, parent);
+//		if(prev_real_cfree.size() != 1){
+//			del_list.push_back(*it);
+//			it = cfree_obj.erase(it);
+//		}
+//		else{
+//			++it;
+//		}
+//	}
+//	controller->robot_update(node);
+//
+//	if((int)cfree_obj.size() == 0)	return false;
+//	else{
+//		RRTNode validnode(node, cfree_obj, del_list);
+//		g_tree.replace(validnode);
+//		return true;
+//	}
+//}
+
 
 GoalJudge RRTConnect::goal_sconf(State3D goal)
 {
@@ -567,75 +766,118 @@ GoalJudge RRTConnect::goal_sconf(State3D goal)
 	return GoalJudge::SGoal;
 }
 
+
+//GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
+//{
+//	double dist = bef.distance(aft);
+//	if(dist > 1.0)	return GoalJudge::NotGoal;
+//
+//	std::vector<PointCloud> bef_cfree = bef.get_cfree_obj();
+//	std::vector<PointCloud> aft_cfree = aft.get_cfree_obj();
+//	std::vector<PointCloud> aft_cdel  = aft.get_cfree_del();
+//
+//	for(const auto& bfree : bef_cfree){
+//		for(const auto& adel : aft_cdel){
+//			bool tof = bfree.overlap(adel);
+//			if(tof)	return GoalJudge::NotGoal;
+//		}
+//	}
+//
+//	for(const auto& bfree: bef_cfree){
+//		for(const auto& afree: aft_cfree){
+//			bool tof = bfree.overlap(afree);
+//			if(tof){
+//				std::cout << "pre: " << bef.getNode() << "  aft: " << aft.getNode() << std::endl;
+//				return GoalJudge::Connect;
+//			}
+//		}
+//	}
+//
+//	return GoalJudge::NotGoal;
+//}
+
+
 GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
 {
 	double dist = bef.distance(aft);
 	if(dist > 1.0)	return GoalJudge::NotGoal;
 
+	Controller* controller = Controller::get_instance();
 	std::vector<PointCloud> bef_cfree = bef.get_cfree_obj();
 	std::vector<PointCloud> aft_cfree = aft.get_cfree_obj();
-	std::vector<PointCloud> aft_cdel  = aft.get_cfree_del();
-
-	for(const auto& bfree : bef_cfree){
-		for(const auto& adel : aft_cdel){
-			bool tof = bfree.overlap(adel);
-			if(tof)	return GoalJudge::NotGoal;
-		}
-	}
+	std::vector<PointCloud> overlap_cfree;
 
 	for(const auto& bfree: bef_cfree){
 		for(const auto& afree: aft_cfree){
 			bool tof = bfree.overlap(afree);
-			if(tof)	return GoalJudge::Connect;
+			if(!tof){
+				return GoalJudge::NotGoal;
+			}
 		}
 	}
 
-	return GoalJudge::NotGoal;
+	assert(bef_cfree.size() == 1);
+	overlap_cfree = strategy->extract(bef_cfree[0], aft.getNode());
+	
+	if(overlap_cfree.size() == 1){
+		std::cout << "pre: " << bef.getNode() << "  aft: " << aft.getNode() << std::endl;
+		return GoalJudge::Connect;
+	}
+	else return GoalJudge::NotGoal;
 }
 
 
 GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 {
-    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
-    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
-    bool flag = false;
+//    int minx = INT_MAX, miny = INT_MAX, mint = INT_MAX;
+//    int maxx = INT_MIN, maxy = INT_MIN, maxt = INT_MIN;
+//    bool flag = false;
+//
+//    for (int i = 0; i < (int)cfo.size(); ++i) {
+//        for (int j = 0; j < (int)cfo[i].size(); ++j) {
+//            /*if (minx > cfo[i].get(j).x)  minx = cfo[i].get(j).x;
+//            if (maxx < cfo[i].get(j).x)  maxx = cfo[i].get(j).x;*/
+//            if (miny > cfo[i].get(j).y)  miny = cfo[i].get(j).y;
+//            if (maxy < cfo[i].get(j).y)  maxy = cfo[i].get(j).y;
+//            if (mint > cfo[i].get(j).th)  mint = cfo[i].get(j).th;
+//            if (maxt < cfo[i].get(j).th)  maxt = cfo[i].get(j).th;
+//            if (cfo[i].get(j).th == 0)   flag = true;
+//        }
+//        int widy = (maxy - miny) / 10;
+//        int widt = (maxt - mint) / 5;
+//        
+//        if (flag) {
+//            int pmint = INT_MAX, pmaxt = INT_MIN;
+//            for (int j = 0; j < (int)cfo[i].size(); ++j) {
+//                if (cfo[i].get(j).th < 180) {
+//                    if (cfo[i].get(j).th > pmaxt)    pmaxt = cfo[i].get(j).th;
+//                }
+//                if (cfo[i].get(j).th >= 180) {
+//                    if (cfo[i].get(j).th < pmint)    pmint = cfo[i].get(j).th;
+//                }
+//            }
+//            widt = (pmaxt + (360 - pmint)) / 5;
+//        }
+//
+////        std::cout << "y width: " << widy << std::endl;
+////        std::cout << "theta width: " << widt << std::endl;
+//        if (widy < 8)      return GoalJudge::NotGoal;
+//        if (widt < 18)      return GoalJudge::NotGoal;
+//    }
+//    return GoalJudge::GGoal;
 
-    for (int i = 0; i < (int)cfo.size(); ++i) {
-        for (int j = 0; j < (int)cfo[i].size(); ++j) {
-            /*if (minx > cfo[i].get(j).x)  minx = cfo[i].get(j).x;
-            if (maxx < cfo[i].get(j).x)  maxx = cfo[i].get(j).x;*/
-            if (miny > cfo[i].get(j).y)  miny = cfo[i].get(j).y;
-            if (maxy < cfo[i].get(j).y)  maxy = cfo[i].get(j).y;
-            if (mint > cfo[i].get(j).th)  mint = cfo[i].get(j).th;
-            if (maxt < cfo[i].get(j).th)  maxt = cfo[i].get(j).th;
-            if (cfo[i].get(j).th == 0)   flag = true;
-        }
-        int widy = (maxy - miny) / 10;
-        int widt = (maxt - mint) / 5;
-        
-        if (flag) {
-            int pmint = INT_MAX, pmaxt = INT_MIN;
-            for (int j = 0; j < (int)cfo[i].size(); ++j) {
-                if (cfo[i].get(j).th < 180) {
-                    if (cfo[i].get(j).th > pmaxt)    pmaxt = cfo[i].get(j).th;
-                }
-                if (cfo[i].get(j).th >= 180) {
-                    if (cfo[i].get(j).th < pmint)    pmint = cfo[i].get(j).th;
-                }
-            }
-            widt = (pmaxt + (360 - pmint)) / 5;
-        }
+	static int maxi = 0;
+	for(int i=0; i<(int)cfo.size(); ++i){
+		if(maxi < cfo[i].size())	maxi = cfo[i].size();
+		if(cfo[i].size() > 1000)	return GoalJudge::GGoal;
+	}
+//	std::cout << "Maxi: " << maxi << std::endl;
+	return GoalJudge::NotGoal;
 
-//        std::cout << "y width: " << widy << std::endl;
-//        std::cout << "theta width: " << widt << std::endl;
-        if (widy < 8)      return GoalJudge::NotGoal;
-        if (widt < 18)      return GoalJudge::NotGoal;
-    }
-    return GoalJudge::GGoal;
 }
 
 
-NodeList RRTConnect::make_path(GoalJudge flag)
+NodeList RRTConnect:: make_path(GoalJudge flag)
 {
 	if(flag == GoalJudge::SGoal){
 		return s_tree.generate_path();
@@ -647,6 +889,25 @@ NodeList RRTConnect::make_path(GoalJudge flag)
 	}
 	else if(flag == GoalJudge::Connect){
 		return path_concat();
+	}
+
+	assert(true);
+	return NodeList();
+}
+
+
+NodeList RRTConnect::make_path(GoalJudge flag, int sindex, int gindex)
+{
+	if(flag == GoalJudge::SGoal){
+		return s_tree.generate_path();
+	}
+	else if(flag == GoalJudge::GGoal){
+		NodeList path = g_tree.generate_path();
+		path.reverse();
+		return path;
+	}
+	else if(flag == GoalJudge::Connect){
+		return path_concat(sindex, gindex);
 	}
 
 	assert(true);
@@ -666,12 +927,27 @@ NodeList RRTConnect::path_concat()
 {
 	NodeList spath, gpath;
 	spath = s_tree.generate_path();
+	spath.printIO();
+	std::cout << "latter" << std::endl;
 	gpath = g_tree.generate_path();
 	gpath.reverse();
+	gpath.printIO();
 	spath.concat(gpath);
 	return spath;
 }
 
+NodeList RRTConnect::path_concat(int sindex, int gindex)
+{
+	NodeList spath, gpath;
+	spath = s_tree.generate_path(sindex);
+	spath.printIO();
+	std::cout << "latter2" << std::endl;
+	gpath = g_tree.generate_path(gindex);
+	gpath.reverse();
+	gpath.printIO();
+	spath.concat(gpath);
+	return spath;
+}
 
 RRTConnect::RRTConnect()
 	:s_tree(), g_tree(), strategy(new DfsCFO()), s_threshold(read_threshold())
@@ -704,27 +980,29 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 		
 		if(s_tree.size() < g_tree.size()){
 			Node newnode = s_tree.format(Rand);
-			for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
+			std::cout << newnode.node << std::endl;
 			opponent_node = g_tree.get_nearest_node(newnode);
 			opponent_index = g_tree.get_nearest_index(newnode);
 
 			if(!sconf_update())	continue;
 			RRTNode sconf_newnode = s_tree.back_RRTNode();
 
-			GoalJudge sgj = sconf_goaljudge(goal, sconf_newnode, opponent_node);
-			if(sgj != GoalJudge::NotGoal)	return make_path(sgj);
+			GoalJudge sgj = sconf_goaljudge(goal, sconf_newnode, opponent_node);	
+			if(sgj != GoalJudge::NotGoal)	
+				return make_path(sgj, s_tree.get_now_index(), opponent_index);
 
 			while(1){
 				g_tree.add(opponent_index, newnode); 
 				if(!gconf_update())	break;
 
+				assert(s_tree.back_RRTNode().get_cfree_obj().size() == 1);
 				GoalJudge ggj = gconf_goaljudge(
 						g_tree.back_RRTNode().get_cfree_obj(), 
-						s_tree.back_RRTNode().node, opponent_node);
+						s_tree.back_RRTNode(), g_tree.back_RRTNode());
 				
 				if(ggj != GoalJudge::NotGoal)	return make_path(ggj);
 
-				if(extend_limit(newnode, opponent_node.node)){
+				if(extend_limit(newnode, g_tree.back_RRTNode().node)){
 					break;
 				}
 				
@@ -735,7 +1013,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 
 		else{
 			Node newnode = g_tree.format(Rand);
-			for(int i=0; i<6; ++i)	std::cout << newnode.node[i] << ", ";	std::cout << std::endl;
+			std::cout << newnode.node << std::endl;
 			opponent_index = s_tree.get_nearest_index(newnode);
 			opponent_node  = s_tree.get_nearest_node(newnode);
 
@@ -746,15 +1024,17 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 					g_tree.back_RRTNode().get_cfree_obj(), 
 					opponent_node, gconf_newnode);
 			
-			if(ggj != GoalJudge::NotGoal)	return make_path(ggj);
+			if(ggj != GoalJudge::NotGoal)	
+				return make_path(ggj, opponent_index, g_tree.get_now_index());
 			
 			while(1){
 				s_tree.add(opponent_index, newnode);
 				if(!sconf_update())	break;
-				GoalJudge sgj = sconf_goaljudge(goal, opponent_node, g_tree.back_RRTNode().node);
+				assert(opponent_node.get_cfree_obj().size() == 1);
+				GoalJudge sgj = sconf_goaljudge(goal, s_tree.back_RRTNode(), g_tree.back_RRTNode());
 				if(sgj != GoalJudge::NotGoal)	return make_path(sgj);
 			
-				if(extend_limit(newnode, opponent_node.node)){
+				if(extend_limit(newnode, s_tree.back_RRTNode().node)){
 					break;
 				}
 	
@@ -774,8 +1054,8 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 void rand_init()
 {
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
-	//std::srand((unsigned int)seed);
-	std::srand(91600);
+	std::srand((unsigned int)seed);
+	std::srand(29818);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 

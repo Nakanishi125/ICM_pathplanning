@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "icmMath.h"
@@ -21,8 +22,10 @@ public:
 	bool overlap(PointCloud pc) const;
 
 	bool contain_pfar(Vector2D<int> pfar) const;
+	void order();
 };
 
+std::ostream& operator<<(std::ostream& out, const PointCloud &pc);
 
 struct PointMark
 {
