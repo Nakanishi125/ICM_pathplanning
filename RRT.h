@@ -26,7 +26,7 @@ private:
 
 	void set_strategy(CFO* cfo);
 	bool initialize(Node ini);
-//	bool config_valid(Node newnode);
+	bool config_valid(Node newnode);
 	bool dfsconfig_valid(Node newnode);
 
 	Node sampling(Node Rand);
@@ -54,7 +54,7 @@ private:
 //	bool config_valid(Node newnode);
 	bool dfsconfig_valid(Node newnode);
 
-
+	void set_strategy(CFO* cfo);
 	Node sampling(Node Rand);
 
 	GoalJudge goal_judge(std::vector<PointCloud> pcs);

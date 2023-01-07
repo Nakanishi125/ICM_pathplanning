@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "PointCloud.h"
 #include "Shape.h"
 
@@ -52,7 +54,25 @@ bool PointCloud::contain_pfar(Vector2D<int> pfar) const
 }
 
 
+//void PointCloud::order()
+//{
+//
+//}
 
+
+std::ostream& operator<<(std::ostream& out, const PointCloud &pc) 
+{
+	out << "size: " << pc.size() << std::endl;
+	out << "{";
+	for(int i=0; i<pc.size(); ++i){
+		out << "[" << pc.get(i).x << "," 
+			       << pc.get(i).y << ","
+				   << pc.get(i).th << "]";
+	}
+	out << "}";
+
+	return out; 
+}
 
 PCMerge::PCMerge(std::vector<PointCloud> _pcs, int symmetry)
 	:subject(_pcs), theta_edge(symmetry)

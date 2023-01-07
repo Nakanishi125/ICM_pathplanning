@@ -139,6 +139,8 @@ NodeList csv_to_nodelist(std::string fn)
 bool PathSmooth::debug()
 {
 	Controller* controller = Controller::get_instance();
+	std::string fn = "debug.txt";
+	std::ofstream ofs(fn, std::ios::app);
 
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
@@ -166,12 +168,17 @@ bool PathSmooth::debug()
 
 	for(int i=1; i<orig_path.size(); ++i){
 		std::cout << i << ": " << orig_path[i] << std::endl;
+		ofs << i << ": " << orig_path[i] << std::endl;
 		if(!robot_update(orig_path[i])){
 			return false;
 		}
 
 		DfsCFO dfs;
 		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, orig_path[i]);
+		for(int i=0; i<cfo_now.size(); ++i){
+			ofs << cfo_now[i] << std::endl;
+		}
+
 		if((int)cfo_now.size() != 1){
 			return false;
 		}

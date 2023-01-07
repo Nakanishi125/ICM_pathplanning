@@ -95,7 +95,7 @@ double Node::distance(const Node& other)
 }
 
 
-// otherï¿½Æ‚Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½É‚È‚ï¿½æ‚¤ï¿½ï¿½*thisï¿½ğ“®‚ï¿½ï¿½ï¿½ï¿½Cotherï¿½ÍŒÅ’ï¿½
+// other‚Æ‚Ì‹——£‚ª1‚É‚È‚é‚æ‚¤‚É*this‚ğ“®‚©‚·Cother‚ÍŒÅ’è
 Node Node::normalize(const Node& other)
 {
 	double dist = distance(other);
