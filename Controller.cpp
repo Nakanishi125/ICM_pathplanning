@@ -13,14 +13,24 @@ Controller* Controller::instance = nullptr;
 
 Shape* Controller::shape_create()
 {
+	std::ofstream log("icm.log", std::ios::app);
 	bp::ptree pt;
 	read_ini("config/ObjectParameter.ini", pt);
 
 	boost::optional<int> carrier = pt.get_optional<int>("target.shape");
 	int sh = carrier.get();
-	if(sh == 1)	return new Rectangle;
-	if(sh == 2) return new LShape;
-	if(sh == 4) return new TShape;
+	if(sh == 1){
+		log << "Object is Rectangle\n";
+		return new Rectangle;
+	}
+	if(sh == 2){
+		log << "Object is L-Shape\n";
+		return new LShape;
+	}
+	if(sh == 4){
+		log << "Object is T-Shape\n";
+		return new TShape;
+	}
 
 	assert(true);
 	return 0;
@@ -63,6 +73,12 @@ void Controller::shape_update(State3D st)
 }
 
 
+bool Controller::RintersectR()
+{
+	return robot->rr_intersect();
+}
+
+
 bool Controller::RintersectR(Node newnode)
 {
 	robot->update(newnode);
@@ -96,4 +112,14 @@ bool Controller::WintersectS()
 	return wall->intersect(shape->get_square());
 }
 
+bool Controller::RintersectL(int index)
+{
+	if(robot->intersect(robot->get_link(index).get_square()))	return true;
+	return false;
+}
 
+bool Controller::LintersectS(int index)
+{
+	if(robot->get_link(index).intersect(shape->get_square()))	return true;
+	return false;
+}

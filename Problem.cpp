@@ -16,6 +16,11 @@ Problem::Problem(Planner* solver)
 
 NodeList Problem::pathplanning()
 {
+	std::ofstream log("icm.log", std::ios::app);
+	log << "initial robot state : " << initial << std::endl;
+	log << "finish  robot state : " << finish << std::endl;
+	log << "object goal state : " << "[" << goal.x << "," << goal.y << "," << goal.th << "]" << std::endl;
+
 	return solver->plan(initial, finish, goal);
 }
 

@@ -1,0 +1,19 @@
+2023-January11-19:00:21
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [0, 0, 0, 0, 0, 0]
+object goal state : [0,200,0]
+Seed : 82466
+Object is L-Shape
+--RRT-Connect exploring--
+Calculation time : 1.15261[s]
+Output to 2023-January11-19:00:21.csv
+2023-January11-19:01:18
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [12, -15, -25, 5, 30, -90]
+object goal state : [0,200,0]
+Seed : 15872
+Object is L-Shape
+--RRT-Connect exploring--
+Calculation time : 109.641[s]
+Output to 2023-January11-19:01:18.csv
+Object is L-Shape

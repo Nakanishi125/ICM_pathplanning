@@ -59,6 +59,7 @@ Node RRT::sampling(Node Rand)
 	static int loop = 0;
 	loop++;
 	Node newnode;
+
 	if (garound.size() < 10)	newnode = tree.format(Rand);
 	else {
 		if (loop % 10 == 3 || loop % 10 == 7)	newnode = tree.format(Rand);
@@ -120,13 +121,13 @@ GoalJudge RRT::goal_judge(State3D goal)
 
     std::cout << "max distance:" << max_dist << std::endl;
 
-//    if (!contain_yth(pc, goal)) {
-//        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
-//        return GoalJudge::NotGoal;
-//    }
-
+    if (!contain_yth(pc, goal)) {
+        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
+        return GoalJudge::NotGoal;
+    }
     if (max_dist > threshold)    return GoalJudge::MiddleGoal;
     else                         return GoalJudge::Goal;
+
 }
 
 
@@ -168,7 +169,6 @@ RRT::RRT()
 	:tree(), garound(), strategy(new DfsCFO()), 
   	threshold(read_threshold())
 {
-	set_strategy(new RasterCFO());
 }
 
 
@@ -188,7 +188,7 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 	{
 		static int i = 0;
 		++i;
-		if (i > 200000)	exit(5963);
+		if (i > 400000)	exit(5963);
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
@@ -820,7 +820,6 @@ GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
 	overlap_cfree = strategy->extract(bef_cfree[0], aft.getNode());
 	
 	if(overlap_cfree.size() == 1){
-		std::cout << "pre: " << bef.getNode() << "  aft: " << aft.getNode() << std::endl;
 		return GoalJudge::Connect;
 	}
 	else return GoalJudge::NotGoal;
@@ -927,11 +926,8 @@ NodeList RRTConnect::path_concat()
 {
 	NodeList spath, gpath;
 	spath = s_tree.generate_path();
-	spath.printIO();
-	std::cout << "latter" << std::endl;
 	gpath = g_tree.generate_path();
 	gpath.reverse();
-	gpath.printIO();
 	spath.concat(gpath);
 	return spath;
 }
@@ -1049,13 +1045,13 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 
 
 
-
-
 void rand_init()
 {
+	std::ofstream log("icm.log", std::ios::app);
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
+	log << "Seed : " << seed << std::endl;
+
 	std::srand((unsigned int)seed);
-	std::srand(29818);
 	std::cout << "Seed value is " << seed << std::endl;
 }
 
@@ -1083,7 +1079,8 @@ double calc_dth2(double th, double goalth)
 double calc_dist(State3D st, State3D goal)
 {
     double dy2 = (st.y - goal.y) * (st.y - goal.y);
-    double dth2 = calc_dth2(st.th, goal.th);
+    double dth = calc_dth2(st.th, goal.th);
+	double dth2 = dth * dth;
 
     double dist = std::sqrt(dy2 + dth2);
     return dist;

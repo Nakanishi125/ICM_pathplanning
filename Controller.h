@@ -26,7 +26,7 @@ public:
 // Below 4 functions can be used 
 // when robot or shape has already updated properly
 // by using above 2 functions
-//	bool RintersectR();
+	bool RintersectR();
 //	bool RintersectW();
 	bool RintersectS();
 	bool WintersectS();
@@ -36,5 +36,8 @@ public:
 	bool RintersectW(Node newnode);
 	bool RintersectS(Node newnode, State3D st);
 	bool WintersectS(State3D st);
+
+	bool RintersectL(int index);
+	bool LintersectS(int index);
 
 };
