@@ -232,7 +232,7 @@ void FormClosure::close()
 	
 	std::vector<int> x_list;
 	for(int i=0; i<cfree_obj.size(); ++i){
-		if(cfree_obj.get(i).y == goal.x && cfree_obj.get(i).th){
+		if(cfree_obj.get(i).y == goal.y && cfree_obj.get(i).th == goal.th){
 			x_list.push_back(cfree_obj.get(i).x);
 		}
 	}

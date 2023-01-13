@@ -33,6 +33,9 @@ std::string get_time_now()
 int main(int argc, char* argv[])
 {
 	std::ofstream log("icm.log", std::ios::app);
+	std::string fn =  get_time_now();
+	log << "\n\n\n" << fn << std::endl;
+
     std::cout << "Welcome to Sensorless ICM planner!\n";
     std::cout << "Setting                     -> 1" << std::endl;
     std::cout << "Generate Path(RRT)          -> 2" << std::endl;
@@ -80,14 +83,14 @@ int main(int argc, char* argv[])
 	}
 
 	else if(i == 7){
-		Node node(-1.7,18.7,-10.1,7.4,31.8,27.8);
+		Node node(44.9, -39.7, -57.5, 38.8, -57.8, 36.4);
 		CFreeICS ics(node);
 		std::vector<PointCloud> cics = ics.extract();
 		for(int i=0; i<cics.size(); ++i)	std::cout << cics[i] << std::endl;
 	}
 
 	else if(i == 8){
-		Node fin(26.1, -14.4, -19.8, 27.8, -24.0, -12.3);
+		Node fin(28.293,-33.4688,-66.8789,52.8649,-62.1714,-23.8621);
 		FormClosure fc(fin);
 		fc.close();
 		Node fcfin = fc.get_fcangle();
@@ -95,8 +98,7 @@ int main(int argc, char* argv[])
 	}
 
 	else{
-		std::string fn =  get_time_now();
-		log << fn << std::endl;
+
 		Problem* p = nullptr;
 	    if (i == 2){
 			log << "--Forward RRT exploring--\n";
@@ -110,7 +112,8 @@ int main(int argc, char* argv[])
 			log << "--RRT-Connect exploring--\n";
 			p = new Problem(new RRTConnect);
 		}
-
+		
+		log.flush();
 		NodeList path = p->pathplanning();
 		
 		long cpu_time = clock();

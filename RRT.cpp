@@ -22,7 +22,7 @@ bool RRT::initialize(Node ini)
 {
 	tree.push_back(ini, origin);
 	CFreeICS ics(ini);
-	for(int i=0; i<6;++i)	std::cout << ini.get_element(i) << ", "; std::cout << std::endl;
+	std::cout << ini << std::endl;
 	if (!robot_update(ini))	return false;
 	std::vector<PointCloud> init_CFree = ics.extract();
 	if(init_CFree.size() == 0)	return false;
@@ -66,7 +66,8 @@ Node RRT::sampling(Node Rand)
 		else                                    newnode = format_around(Rand);
 	}
 	std::cout << loop << ": ";
-	for (int i = 0; i < 6; ++i)	std::cout << newnode.get_element(i) << ", ";	std::cout << std::endl;
+	std::cout << newnode << std::endl;
+
 	return newnode;
 }
 
@@ -169,6 +170,8 @@ RRT::RRT()
 	:tree(), garound(), strategy(new DfsCFO()), 
   	threshold(read_threshold())
 {
+	std::ofstream log("icm.log", std::ios::app);
+	log << "Forward epsilon : " << threshold << std::endl;
 }
 
 
@@ -188,7 +191,7 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 	{
 		static int i = 0;
 		++i;
-		if (i > 400000)	exit(5963);
+		if (i > 500000)	exit(5963);
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
@@ -445,10 +448,14 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 //    return GoalJudge::Goal;
 
 	static int maxi = 0;
+	int nu = 1000;
 	for(int i=0; i<(int)pcs.size(); ++i){
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
-		if(pcs[i].size() > 400){
+		if(pcs[i].size() > nu){
+			std::ofstream log("icm.log", std::ios::app);
+			log << "Reverse nu : " << nu << std::endl;
 			std::cout << "num: " << pcs[i].size() << std::endl;
+
 			return GoalJudge::Goal;
 		}
 	}
@@ -494,6 +501,7 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 		}
 
 		GoalJudge flag = goal_judge(tree.back_RRTNode().get_cfree_obj());
+
 		if(flag == GoalJudge::Goal)	break;
 	}
 	
@@ -595,10 +603,14 @@ bool RRTConnect::gconf_update()
 GoalJudge RRTConnect::sconf_goaljudge(State3D goal, RRTNode bef, RRTNode aft)
 {
 	if(goal_sconf(goal) == GoalJudge::SGoal){
+		std::ofstream log("icm.log", std::ios::app);
+		log << "Forward Goal\n";
 		std::cout << "Start conf reached to the goal" << std::endl;
 		return GoalJudge::SGoal;
 	}
 	if(goal_connect(bef, aft) == GoalJudge::Connect){
+		std::ofstream log("icm.log", std::ios::app);
+		log << "Connect Goal\n";
 		std::cout << "Connect goal!" << std::endl;
 		return GoalJudge::Connect;
 	}
@@ -610,10 +622,14 @@ GoalJudge RRTConnect::sconf_goaljudge(State3D goal, RRTNode bef, RRTNode aft)
 GoalJudge RRTConnect::gconf_goaljudge(std::vector<PointCloud> cfo, RRTNode bef, RRTNode aft)
 {
 	if(goal_gconf(cfo) == GoalJudge::GGoal){
+		std::ofstream log("icm.log", std::ios::app);
+		log << "Reverse Goal\n";
 		std::cout << "Goal conf reached to desire start condition." << std::endl;
 		return GoalJudge::GGoal;
 	}
 	if(goal_connect(bef, aft) == GoalJudge::Connect){
+		std::ofstream log("icm.log", std::ios::app);
+		log << "Connect Goal\n";
 		std::cout << "Connect goal." << std::endl;
 		return GoalJudge::Connect;
 	}
@@ -866,9 +882,14 @@ GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 //    return GoalJudge::GGoal;
 
 	static int maxi = 0;
+	int nu = 1000;
 	for(int i=0; i<(int)cfo.size(); ++i){
 		if(maxi < cfo[i].size())	maxi = cfo[i].size();
-		if(cfo[i].size() > 1000)	return GoalJudge::GGoal;
+		if(cfo[i].size() > nu){
+			std::ofstream log("icm.log", std::ios::app);
+			log << "Reverse nu : " << nu << std::endl;
+			return GoalJudge::GGoal;
+		}
 	}
 //	std::cout << "Maxi: " << maxi << std::endl;
 	return GoalJudge::NotGoal;
@@ -947,7 +968,10 @@ NodeList RRTConnect::path_concat(int sindex, int gindex)
 
 RRTConnect::RRTConnect()
 	:s_tree(), g_tree(), strategy(new DfsCFO()), s_threshold(read_threshold())
-{}
+{
+	std::ofstream log("icm.log", std::ios::app);
+	log << "Forward epsilon : " << s_threshold << std::endl;
+}
 
 
 NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
