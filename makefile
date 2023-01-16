@@ -3,7 +3,7 @@ TARGET = Manipulation
 SRCS =  main.cpp 
 SRCS += icmMath.cpp CSpace.cpp RRT.cpp CFree.cpp CFreeICS.cpp
 SRCS += Labeling.cpp Link.cpp Node.cpp OneHand.cpp PointCloud.cpp Rectangle.cpp Planner.cpp FormClosure.cpp PSO.cpp
-SRCS += Robot.cpp RRTTree.cpp Shape.cpp Square.cpp Wall.cpp LShape.cpp TaskSet.cpp Problem.cpp Controller.cpp pathsmooth.cpp TShape.cpp
+SRCS += Robot.cpp RRTTree.cpp Shape.cpp Square.cpp Wall.cpp LShape.cpp TaskSet.cpp Problem.cpp Controller.cpp pathsmooth.cpp TShape.cpp Triangle.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 CXX = g++

@@ -1,4 +1,5 @@
 #include "OneHand.h"
+#include "Square.h"
 
 
 OneHand::OneHand(HandInfo info)
@@ -62,6 +63,18 @@ bool OneHand::intersect(MultiSquare poly)
 }
 
 
+bool OneHand::intersect(Triangulus poly)
+{
+	//if (!simple_check(poly))	return false;
+
+	for (int i = 0; i < (int)hand.size(); ++i) {
+		if (hand[i].intersect(poly))		return true;
+	}
+
+	return false;
+}
+
+
 bool OneHand::simple_check(Square poly)		// Not intersect -> false
 {
 	for (int i = 0; i < (int)hand.size(); ++i) {
@@ -73,6 +86,17 @@ bool OneHand::simple_check(Square poly)		// Not intersect -> false
 	return false;
 }
 
+
+//bool OneHand::simple_check(Triangulus poly)		// Not intersect -> false
+//{
+//	for (int i = 0; i < (int)hand.size(); ++i) {
+//		double dist = distance(hand[i].get_center(), poly.get_center());
+//		if (dist < (hand[i].get_radius() + poly.get_radius()))
+//			return true;
+//	}
+//
+//	return false;
+//}
 
 //bool OneHand::simple_check(MultiSquare poly)
 //{

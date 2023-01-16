@@ -42,6 +42,13 @@ bool Robot::intersect(MultiSquare poly)
 	return false;
 }
 
+bool Robot::intersect(Triangulus poly)
+{
+	if (left.intersect(poly))	return true;
+	if (right.intersect(poly))	return true;
+	return false;
+}
+
 
 Link Robot::get_link(int dof)
 {

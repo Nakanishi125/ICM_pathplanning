@@ -96,6 +96,11 @@ public:
 		vertices[2] = p3;
 	}
 
+	Triangulus(std::vector<Point2D> v)
+		:vertices(v)
+	{
+	}
+
 	Triangulus(const Triangulus& tri)
 		:vertices()
 	{
@@ -106,6 +111,9 @@ public:
 	{
 		return vertices;
 	}
+
+//	Point2D get_center() const;
+//	double get_radius() const;
 
 	bool intersect(Square other)
 	{
@@ -126,6 +134,14 @@ public:
 		}
 	
 		return true;
+	}
+
+	bool intersect(MultiSquare others)
+	{
+		for(int i=0; i<(int)others.size(); ++i){
+			if(intersect(others.element(i)))	return true;
+		}
+		return false;
 	}
 
 	std::vector<OBB> makeOBB(std::vector<Vector2D<double>> axis)

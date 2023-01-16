@@ -15,6 +15,7 @@ public:
 	bool rr_intersect();
 	bool intersect(Square poly);
 	bool intersect(MultiSquare poly);
+	bool intersect(Triangulus poly);
 
 	Link get_link(int dof);
 

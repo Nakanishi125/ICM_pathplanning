@@ -61,3 +61,25 @@ MultiSquare LShape::get_square()
 
 	return MultiSquare(msq);
 }
+
+
+bool LShape::intersect(Square sq)
+{
+	MultiSquare msq = get_square();
+	for(int i=0; i<(int)msq.size(); ++i){
+		if(sq.intersect(msq.element(i)))	return true;
+	}
+	return false;
+}
+
+
+bool LShape::intersect_robot(Robot* robot)
+{
+	return robot->intersect(get_square());
+}
+
+
+bool LShape::intersect_wall(Wall* wall)
+{
+	return wall->intersect(get_square());
+}

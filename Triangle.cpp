@@ -3,10 +3,16 @@
 #include "icmMath.h"
 
 Triangle::Triangle()
-	:e1(120), e2(120), e3(120), sym_angle(120), radius()
+	:e1(120), e2(120), e3(120), radius()
 {
 	double under = 2*sqrt(1 - ( (e2*e2+e3*e3-e1*e1)/(2*e2*e3) * (e2*e2+e3*e3-e1*e1)/(2*e2*e3)));
 	radius = e1/under;
+}
+
+
+Polygon Triangle::get_poly()
+{
+	return poly;
 }
 
 
@@ -33,10 +39,28 @@ double Triangle::getRadius()
 }
 
 
-int Triangle::get_symangle()
+//int Triangle::get_symangle()
+//{
+//	return sym_angle;
+//}
+
+
+bool Triangle::intersect(Square sq)
 {
-	return sym_angle;
+	Triangulus tri(poly.getter());
+	return tri.intersect(sq);
 }
+
+bool Triangle::intersect_robot(Robot* robot)
+{
+	return robot->intersect(Triangulus(poly.getter()));
+}
+
+bool Triangle::intersect_wall(Wall* wall)
+{
+	return wall->intersect(Triangulus(poly.getter()));
+}
+
 
 
 

@@ -11,6 +11,7 @@ public:
 	Wall();
 	bool intersect(Square obj);
 	bool intersect(MultiSquare objs);
+	bool intersect(Triangulus obj);
 	MultiSquare getter() { return wall; }
 };
 

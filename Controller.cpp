@@ -5,6 +5,7 @@
 #include "Controller.h"
 #include "Rectangle.h"
 #include "LShape.h"
+#include "Triangle.h"
 #include "TShape.h"
 
 namespace bp = boost::property_tree;
@@ -26,6 +27,10 @@ Shape* Controller::shape_create()
 	if(sh == 2){
 		log << "Object is L-Shape\n";
 		return new LShape;
+	}
+	if(sh == 3){
+		log << "Object is Triangle\n";
+		return new Triangle;
 	}
 	if(sh == 4){
 		log << "Object is T-Shape\n";
@@ -98,18 +103,20 @@ bool Controller::RintersectS(Node newnode, State3D st)
 {
 	robot->update(newnode);
 	shape->update(st);
-	if(robot->intersect(shape->get_square()))return true;
-	return false;
+//	if(robot->intersect(shape->get_square()))return true;
+	return shape->intersect_robot(robot);
 }
 
 bool Controller::RintersectS()
 {
-	return robot->intersect(shape->get_square());
+//	return robot->intersect(shape->get_square());
+	return shape->intersect_robot(robot);
 }
 
 bool Controller::WintersectS()
 {
-	return wall->intersect(shape->get_square());
+//	return wall->intersect(shape->get_square());
+	return shape->intersect_wall(wall);
 }
 
 bool Controller::RintersectL(int index)
@@ -120,6 +127,7 @@ bool Controller::RintersectL(int index)
 
 bool Controller::LintersectS(int index)
 {
-	if(robot->get_link(index).intersect(shape->get_square()))	return true;
-	return false;
+//	if(robot->get_link(index).intersect(shape->get_square()))	return true;
+//	return false;
+	return shape->intersect(robot->get_link(index).get_square());
 }

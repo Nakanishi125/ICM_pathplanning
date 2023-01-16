@@ -1,4 +1,5 @@
 #include "Wall.h"
+#include "Triangle.h"
 
 
 Wall::Wall()
@@ -25,4 +26,9 @@ bool Wall::intersect(MultiSquare objs)
 	}
 
 	return false;
+}
+
+bool Wall::intersect(Triangulus obj)
+{
+	return obj.intersect(wall);
 }

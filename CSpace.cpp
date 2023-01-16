@@ -51,6 +51,16 @@ int read_symangle()
 		int th = carrier.get();
 		return th;
 	}
+	else if(flag == 3){
+		carrier = pt.get_optional<int>("Triangle.symmetry");
+		int th = carrier.get();
+		return th;
+	}
+	else if(flag == 4){
+		carrier = pt.get_optional<int>("TShape.symmetry");
+		int th = carrier.get();
+		return th;
+	}
 	
 	return 360;
 }

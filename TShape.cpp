@@ -1,4 +1,5 @@
 #include "TShape.h"
+#include "Square.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -57,4 +58,25 @@ MultiSquare TShape::get_square()
 	std::vector<Square> msq = { sq1, sq2 };
 
 	return MultiSquare(msq);
+}
+
+
+bool TShape::intersect(Square sq)
+{
+	MultiSquare msq = get_square();
+	for(int i=0; i<(int)msq.size(); ++i){
+		if(sq.intersect(msq.element(i)))	return true;
+	}
+	return false;
+}
+
+bool TShape::intersect_robot(Robot* robot)
+{
+	return robot->intersect(get_square());
+}
+
+
+bool TShape::intersect_wall(Wall* wall)
+{
+	return wall->intersect(get_square());
 }

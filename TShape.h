@@ -21,4 +21,7 @@ public:
 	int get_symangle();
 	MultiSquare get_square();
 
+	bool intersect(Square sq);
+	bool intersect_robot(Robot* robot);
+	bool intersect_wall(Wall* wall);
 };

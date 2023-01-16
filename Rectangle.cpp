@@ -47,6 +47,22 @@ double Rectangle::getRadius()
 //	return sym_angle;
 //}
 
+bool Rectangle::intersect(Square sq)
+{
+	return sq.intersect(Square(poly.getter()));
+}
+
+
+bool Rectangle::intersect_robot(Robot* robot)
+{
+	return robot->intersect(get_square());
+}
+
+
+bool Rectangle::intersect_wall(Wall* wall)
+{
+	return wall->intersect(get_square());
+}
 
 
 double read_shortside()
@@ -64,17 +80,3 @@ double read_longside()
 	boost::optional<int> carrier = pt.get_optional<int>("Rectangle.long_side");
 	return carrier.get();
 }
-
-
-//bool Rectangle::intersect_robot(Robot* robot)
-//{
-//	Square obj(poly.getter());
-//	return robot->intersect(obj);
-//}
-//
-//
-//bool Rectangle::intersect_wall(Wall* wall)
-//{
-//	Square obj(poly.getter());
-//	return wall->intersect(obj);
-//}

@@ -190,7 +190,7 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 	{
 		static int i = 0;
 		++i;
-		if (i > 500000)	exit(5963);
+		if (i > 300000)	exit(5963);
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);

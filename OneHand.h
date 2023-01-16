@@ -27,6 +27,7 @@ public:
 	bool rr_intersect(OneHand other);
 	bool intersect(Square poly);
 	bool intersect(MultiSquare poly);
+	bool intersect(Triangulus poly);
 	bool simple_check(Square poly);
 	// bool OneHand::simple_check(MultiSquare poly)
 

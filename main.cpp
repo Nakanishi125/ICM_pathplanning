@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	}
 
 	else if(i == 8){
-		Node fin(12, -15, -25, 5, 30, -90);
+		Node fin(44.7, -6.7, -1.8, -17.9, 38, -50);
 		FormClosure fc(fin);
 		fc.close();
 		Node fcfin = fc.get_fcangle();

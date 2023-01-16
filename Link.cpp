@@ -1,4 +1,5 @@
 #include "Link.h"
+#include "Square.h"
 
 
 Link::Link(RecSize r, Mat22<int> coord, Point2D btm)
@@ -63,6 +64,14 @@ bool Link::intersect(MultiSquare others)
 	}
 	return false;
 }
+
+bool Link::intersect(Triangulus other)
+{
+	if(other.intersect(vertices))	return true;
+	return false;
+}
+
+
 
 void Link::calc_top(double abs_angle)
 {

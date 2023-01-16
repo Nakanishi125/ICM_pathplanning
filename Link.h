@@ -20,6 +20,7 @@ public:
 	void update(double abs_angle, Point2D bottom_center);
 	bool intersect(Square other);
 	bool intersect(MultiSquare others);
+	bool intersect(Triangulus other);
 
 	void calc_top(double abs_angle);
 	Point2D get_center() const;
