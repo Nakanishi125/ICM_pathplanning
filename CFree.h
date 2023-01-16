@@ -129,7 +129,6 @@ public:
 			std::stack<State3D> stack;
 			State3D orig = move(point, i);
 			assert(stack.size() == 0);
-		//	stack.emplace(orig);
 
 			if (!preprocess(orig))	continue;
 			if (edge_judge(orig)) {
@@ -160,31 +159,6 @@ public:
 
 					if (!preprocess(next))	continue;
 					if (edge_judge(next)) {
-				/////////////////////////////////////////////////////////////////////////////////////
-//						PointMarkCloud tmp;
-//						for(int x=0; x<previous.size(); ++x){
-//							if(!previous.get_mk(x))	tmp.push_back(previous.get_pm(i));
-//						}
-						//while(tmp.size() != 0){
-						//	adjacent_check(tmp);
-						//	for(int y=0; y<tmp.size(); ++y){
-						//		if(tmp.get_mk(y)){
-						//			for(int z=0; z<previous.size(); ++z){
-						//				if(previous.get_pt(z) == tmp.get_pt(y))
-						//					previous.get_mk(z) = true;
-						//			}
-						//		}
-						//	}
-						//	
-						//	PointMarkCloud tmp2;
-						//	for(int t=0; t<tmp.size(); ++t){
-						//		if(!tmp.get_mk(t))	tmp2.push_back(tmp.get_pm(t));
-						//	}
-						//	tmp = tmp2;
-						//}
-						//
-				/////////////////////////////////////////////////////////////////////////////////////////
-						
 						c_del.push_back(c_dfs.back());
 						c_dfs.pop_back();
 						return;
@@ -267,79 +241,6 @@ public:
 		}
 		return false;
 	}
-
-//	void adjacent_check(PointMarkCloud& pmc)
-//	{
-//		Controller* controller = Controller::get_instance();
-//		CSpaceConfig* cs = CSpaceConfig::get_instance();
-//		PointMarkCloud backup = pmc;
-//
-//		for(int i=0; i<pmc.size(); ++i){
-//			if (pmc.get_mk(i) == true)	continue;
-//			pmc.toTrue(i);	
-//
-//			controller->shape_update(pmc.get_pt(i));
-//			if (controller->RintersectS())	continue;
-//			if (controller->WintersectS())	continue;
-//
-//			for (int d = 1; d <= 26; ++d) {
-//				std::stack<State3D> stack;
-//				State3D orig = move(pmc.get_pt(i), d);
-//				stack.emplace(orig);
-//
-//				if(orig.th < 0)					orig.th = orig.th + (cs->gettop().th + cs->getrange().z);
-//				if(orig.th > cs->gettop().th)	orig.th = orig.th - (cs->gettop().th + cs->getrange().z);
-//
-//				for (int i = 0; i < (int)pmc.size(); ++i) {
-//					if (pmc.get_pt(i) == orig) {
-//						pmc.toTrue(i);
-//						return;
-//					}
-//				}
-//		
-//				if (edge_judge(orig)){
-//					pmc = backup;
-//					return;
-//				}
-//
-//				controller->shape_update(orig);	// shape is updated
-//				if (controller->RintersectS())	continue;
-//				if (controller->WintersectS())	continue;
-//	
-//				if(c_dfs.back().exist(orig))	return;
-//				stack.emplace(orig);
-//	
-//				while (stack.size() != 0)
-//				{
-//					State3D pt = stack.top();
-//					stack.pop();
-//					for (int i = 1; i <= 26; ++i) {
-//						State3D next = move(pt, i);
-//	
-//						if(next.th < 0)					next.th = next.th + (cs->gettop().th + cs->getrange().z);
-//						if(next.th > cs->gettop().th)	next.th = next.th - (cs->gettop().th + cs->getrange().z);
-//						int index = target.coord_to_index(next);
-//		
-//						for (int i = 0; i < (int)pmc.size(); ++i) {
-//							if (pmc.get_pt(i) == next) {
-//								pmc.toTrue(i);
-//								return;
-//							}
-//						}
-//
-//						if (edge_judge(orig)){
-//							pmc = backup;
-//							return;
-//						}
-//		
-//						controller->shape_update(next);	// shape is updated
-//						if (controller->RintersectS())	continue;
-//						if (controller->WintersectS())	continue;
-//			
-//						if(c_dfs.back().exist(next))	return;
-//						stack.emplace(next);
-//					}
-//				}
 
 
 };

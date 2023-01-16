@@ -26,7 +26,6 @@ public:
 };
 
 
-
 double read_shortside();
 double read_longside();
 //Polygon calc_polygon(State3D pos, double ss, double ls);

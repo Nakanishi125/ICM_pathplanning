@@ -28,19 +28,19 @@ NodeList Problem::pathplanning()
 Node read_initial()
 {
 	bp::ptree pt;
-	int th1, th2, th3, th4, th5, th6;
+	double th1, th2, th3, th4, th5, th6;
 	read_ini("config/ProblemDefine.ini", pt);
-	boost::optional<int> carrier = pt.get_optional<int>("start.th1");
+	boost::optional<double> carrier = pt.get_optional<double>("start.th1");
 	th1 = carrier.get();
-	carrier = pt.get_optional<int>("start.th2");
+	carrier = pt.get_optional<double>("start.th2");
 	th2 = carrier.get();
-	carrier = pt.get_optional<int>("start.th3");
+	carrier = pt.get_optional<double>("start.th3");
 	th3 = carrier.get();
-	carrier = pt.get_optional<int>("start.th4");
+	carrier = pt.get_optional<double>("start.th4");
 	th4 = carrier.get();
-	carrier = pt.get_optional<int>("start.th5");
+	carrier = pt.get_optional<double>("start.th5");
 	th5 = carrier.get();
-	carrier = pt.get_optional<int>("start.th6");
+	carrier = pt.get_optional<double>("start.th6");
 	th6 = carrier.get();
 
 	return Node(th1, th2, th3, th4, th5, th6);
@@ -50,19 +50,19 @@ Node read_initial()
 Node read_finish()
 {
 	bp::ptree pt;
-	int th1, th2, th3, th4, th5, th6;
+	double th1, th2, th3, th4, th5, th6;
 	read_ini("config/ProblemDefine.ini", pt);
-	boost::optional<int> carrier = pt.get_optional<int>("finish.th1");
+	boost::optional<double> carrier = pt.get_optional<double>("finish.th1");
 	th1 = carrier.get();
-	carrier = pt.get_optional<int>("finish.th2");
+	carrier = pt.get_optional<double>("finish.th2");
 	th2 = carrier.get();
-	carrier = pt.get_optional<int>("finish.th3");
+	carrier = pt.get_optional<double>("finish.th3");
 	th3 = carrier.get();
-	carrier = pt.get_optional<int>("finish.th4");
+	carrier = pt.get_optional<double>("finish.th4");
 	th4 = carrier.get();
-	carrier = pt.get_optional<int>("finish.th5");
+	carrier = pt.get_optional<double>("finish.th5");
 	th5 = carrier.get();
-	carrier = pt.get_optional<int>("finish.th6");
+	carrier = pt.get_optional<double>("finish.th6");
 	th6 = carrier.get();
 
 	return Node(th1, th2, th3, th4, th5, th6);

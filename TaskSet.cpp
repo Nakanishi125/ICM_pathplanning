@@ -50,7 +50,7 @@ void TaskSet::robotconfig()
 void TaskSet::problemdef()
 {
 	ptree pt;
-	int th_s1, th_s2, th_s3, th_s4, th_s5, th_s6;
+	double th_s1, th_s2, th_s3, th_s4, th_s5, th_s6;
 	std::cout << "Input initial state" << std::endl;
 	std::cout << "th1: ";	std::cin >> th_s1;
 	std::cout << "th2: ";	std::cin >> th_s2;
@@ -60,7 +60,7 @@ void TaskSet::problemdef()
 	std::cout << "th6: ";	std::cin >> th_s6;
 	std::cout << std::endl;
 
-	int th_g1, th_g2, th_g3, th_g4, th_g5, th_g6;
+	double th_g1, th_g2, th_g3, th_g4, th_g5, th_g6;
 	std::cout << "Input final state" << std::endl;
 	std::cout << "th1: ";	std::cin >> th_g1;
 	std::cout << "th2: ";	std::cin >> th_g2;
@@ -166,3 +166,19 @@ void TaskSet::run()
 	problemdef();
 	object();
 }
+
+
+//void TaskSet::get()
+//{
+//	ptree robot, problem, object, space;
+//	read_ini("config/RobotConfig.ini", robot);
+//	read_ini("config/ProblemDefine.ini", problem);
+//	read_ini("config/ObjectParameter.ini", object);
+//	read_ini("config/SpaceConfig.ini", space);
+//
+//	boost::
+//}
+//
+
+
+

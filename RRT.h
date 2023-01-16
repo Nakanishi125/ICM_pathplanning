@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cassert>
 
 #include "RRTTree.h"
@@ -53,6 +55,7 @@ private:
 
 //	bool config_valid(Node newnode);
 	bool dfsconfig_valid(Node newnode);
+	bool continuous_check(PointCloud prev, PointCloud curr);
 
 	void set_strategy(CFO* cfo);
 	Node sampling(Node Rand);

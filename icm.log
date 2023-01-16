@@ -142,3 +142,691 @@ Object is L-Shape
 Connect Goal
 Calculation time : 10.1457[s]
 Output to 2023-January13-12:10:11.csv
+
+
+
+2023-January13-12:43:46
+--Reverse RRT exploring--
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [12, -15, -25, 5, 30, -90]
+object goal state : [0,200,0]
+Seed : 25791
+Object is L-Shape
+Reverse nu : 1000
+Calculation time : 28.2313[s]
+Output to 2023-January13-12:43:46.csv
+
+
+
+2023-January13-12:50:21
+
+
+
+2023-January13-13:17:52
+--Task setting--
+
+
+
+2023-January13-13:19:05
+
+
+
+2023-January13-13:19:33
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [-44, 50, 49, 64, -28, -63]
+object goal state : [0,200,90]
+Seed : 36699
+Object is Rectangle
+
+
+
+2023-January13-13:20:13
+--Reverse RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [-44, 50, 49, 64, -28, -63]
+object goal state : [0,200,90]
+Seed : 23527
+Object is Rectangle
+Reverse nu : 800
+Calculation time : 114.473[s]
+Output to 2023-January13-13:20:13.csv
+
+
+
+2023-January13-13:23:53
+--Debug--
+Object is Rectangle
+
+
+
+2023-January13-13:24:14
+--Debug--
+Object is Rectangle
+
+
+
+2023-January15-18:31:37
+Object is Rectangle
+
+
+
+2023-January15-18:32:28
+Object is Rectangle
+
+
+
+2023-January15-18:32:39
+--Task setting--
+
+
+
+2023-January15-18:33:19
+Forward epsilon : 50
+--RRT-Connect exploring--
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [12, -15, -25, 5, 30, -90]
+object goal state : [0,200,0]
+Seed : 2198
+Object is L-Shape
+Connect Goal
+Calculation time : 18.6685[s]
+Output to 2023-January15-18:33:19.csv
+
+
+
+2023-January15-18:36:14
+Object is L-Shape
+
+
+
+2023-January15-18:36:46
+
+
+
+2023-January15-18:37:27
+--Calculate C_free_ICS--
+Object is L-Shape
+
+
+
+2023-January15-18:37:59
+--Task setting--
+
+
+
+2023-January15-18:38:33
+Object is L-Shape
+
+
+
+2023-January15-18:39:39
+Object is L-Shape
+
+
+
+2023-January15-18:45:04
+Object is L-Shape
+
+
+
+2023-January15-18:49:48
+Object is L-Shape
+
+
+
+2023-January15-18:52:33
+Object is L-Shape
+
+
+
+2023-January15-18:53:37
+Object is L-Shape
+
+
+
+2023-January15-18:56:34
+Object is L-Shape
+
+
+
+2023-January15-18:56:57
+
+
+
+2023-January15-18:57:12
+
+
+
+2023-January15-18:59:51
+Object is L-Shape
+
+
+
+2023-January15-19:00:40
+Object is L-Shape
+
+
+
+2023-January15-19:04:06
+Object is L-Shape
+
+
+
+2023-January15-19:05:10
+Object is L-Shape
+
+
+
+2023-January15-19:07:33
+Object is L-Shape
+
+
+
+2023-January15-19:08:43
+Object is L-Shape
+
+
+
+2023-January15-19:09:29
+Object is L-Shape
+
+
+
+2023-January15-19:09:55
+Object is L-Shape
+
+
+
+2023-January15-19:16:09
+Object is L-Shape
+
+
+
+2023-January15-19:19:00
+Object is L-Shape
+
+
+
+2023-January15-19:19:59
+Object is L-Shape
+
+
+
+2023-January15-20:01:23
+Object is L-Shape
+
+
+
+2023-January15-22:53:09
+Object is L-Shape
+
+
+
+2023-January15-23:07:31
+Object is L-Shape
+
+
+
+2023-January16-01:52:18
+Object is L-Shape
+
+
+
+2023-January16-03:28:46
+--Debug--
+Object is L-Shape
+
+
+
+2023-January16-03:30:22
+--Debug--
+Object is L-Shape
+
+
+
+2023-January16-03:30:50
+--Task setting--
+
+
+
+2023-January16-03:32:42
+--Task setting--
+
+
+
+2023-January16-03:32:53
+--Task setting--
+
+
+
+2023-January16-03:33:39
+--Task setting--
+
+
+
+2023-January16-03:34:19
+--Debug--
+Object is T-Shape
+
+
+
+2023-January16-03:39:40
+Forward epsilon : 50
+
+
+
+2023-January16-03:40:59
+--Reverse RRT exploring--
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [19, -21, -15, 21, -30, -9]
+object goal state : [0,200,0]
+Seed : 67215
+Object is T-Shape
+Reverse nu : 800
+Calculation time : 59.3181[s]
+Output to 2023-January16-03:40:59.csv
+
+
+
+2023-January16-03:43:32
+--Reverse RRT exploring--
+initial robot state : [40, -50, -30, 40, -50, -30]
+finish  robot state : [19.5, -21.8, -15.7, 21.4, -30.2, -9.02]
+object goal state : [0,200,0]
+Seed : 13730
+Object is T-Shape
+
+
+
+2023-January16-16:11:28
+--Task setting--
+
+
+
+2023-January16-16:12:18
+
+
+
+2023-January16-16:12:46
+--Reverse RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [-44, 50, 49, 64, -28, -63]
+object goal state : [0,200,90]
+Seed : 14771
+Object is Rectangle
+
+
+
+2023-January16-16:13:59
+--Task setting--
+
+
+
+2023-January16-16:14:24
+--Task setting--
+
+
+
+2023-January16-16:14:51
+--Reverse RRT exploring--
+initial robot state : [0, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 42825
+Object is Rectangle
+
+
+
+2023-January16-16:17:51
+--Reverse RRT exploring--
+initial robot state : [0, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 79975
+Object is Rectangle
+Reverse nu : 100
+Calculation time : 3.3788[s]
+Output to 2023-January16-16:17:51.csv
+
+
+
+2023-January16-16:18:26
+--Reverse RRT exploring--
+initial robot state : [0, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 23250
+Object is Rectangle
+
+
+
+2023-January16-16:20:08
+--Reverse RRT exploring--
+initial robot state : [0, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 33539
+Object is Rectangle
+Reverse nu : 150
+Calculation time : 63.4826[s]
+Output to 2023-January16-16:20:08.csv
+
+
+
+2023-January16-16:21:47
+--Task setting--
+
+
+
+2023-January16-16:22:43
+
+
+
+2023-January16-16:22:46
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [17.2, -19.1, -49.5, 31.2, -31.6, -31.1]
+finish  robot state : [21, -3.5, -28.2, 12.2, 10, -9.7]
+object goal state : [0,200,90]
+Seed : 21300
+Object is Rectangle
+
+
+
+2023-January16-16:25:31
+
+
+
+2023-January16-16:25:47
+--Debug--
+Object is Rectangle
+
+
+
+2023-January16-16:27:52
+--Task setting--
+
+
+
+2023-January16-16:29:10
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [17.2037, -19.1411, -49.5118, 31.5646, -31.5693, -31.0754]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 63694
+Object is Rectangle
+Calculation time : 0.249893[s]
+Output to 2023-January16-16:29:10.csv
+
+
+
+2023-January16-16:32:53
+--Reverse RRT exploring--
+initial robot state : [17.2037, -19.1411, -49.5118, 31.5646, -31.5693, -31.0754]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 2137
+Object is Rectangle
+
+
+
+2023-January16-16:33:09
+--Reverse RRT exploring--
+initial robot state : [17.2037, -19.1411, -49.5118, 31.5646, -31.5693, -31.0754]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 27664
+Object is Rectangle
+Reverse nu : 400
+Calculation time : 17.0765[s]
+Output to 2023-January16-16:33:09.csv
+Reverse nu : 400
+Calculation time : 328.742[s]
+Output to 2023-January16-16:32:53.csv
+
+
+
+2023-January16-16:40:54
+--Task setting--
+
+
+
+2023-January16-16:41:02
+--Task setting--
+
+
+
+2023-January16-16:41:25
+--Task setting--
+
+
+
+2023-January16-16:42:21
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [0.47168, 37.2324, -50.7726, 15.8411, 30.8564, -35.2299]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 69285
+Object is Rectangle
+
+
+
+2023-January16-16:44:23
+--Reverse RRT exploring--
+initial robot state : [0.47168, 37.2324, -50.7726, 15.8411, 30.8564, -35.2299]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 46459
+Object is Rectangle
+
+
+
+2023-January16-16:44:31
+--Reverse RRT exploring--
+initial robot state : [0.47168, 37.2324, -50.7726, 15.8411, 30.8564, -35.2299]
+finish  robot state : [21, -3.5, -28.2, 12.2, -10, 9.7]
+object goal state : [0,200,90]
+Seed : 42244
+Object is Rectangle
+Reverse nu : 400
+Calculation time : 10.6207[s]
+Output to 2023-January16-16:44:31.csv
+Reverse nu : 400
+Calculation time : 325.129[s]
+Output to 2023-January16-16:44:23.csv
+
+
+
+2023-January16-16:51:46
+--Task setting--
+
+
+
+2023-January16-16:52:04
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [0, 0, 0, 0, 0, 0]
+object goal state : [0,200,90]
+Seed : 89655
+Object is Rectangle
+
+
+
+2023-January16-17:11:19
+--Reverse RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [0, 0, 0, 0, 0, 0]
+object goal state : [0,200,90]
+Seed : 29270
+Object is Rectangle
+Calculation time : 0.172031[s]
+Output to 2023-January16-17:11:19.csv
+
+
+
+2023-January16-17:12:16
+--Task setting--
+
+
+
+2023-January16-17:13:12
+--Reverse RRT exploring--
+initial robot state : [21, -3.5, -28.2, 12.3, -10, -9.7]
+finish  robot state : [21, -3.5, -28.2, 12.3, -10, -9.7]
+object goal state : [0,200,90]
+Seed : 83437
+Object is Rectangle
+Calculation time : 0.178922[s]
+Output to 2023-January16-17:13:12.csv
+
+
+
+2023-January16-17:13:43
+--Task setting--
+
+
+
+2023-January16-17:14:17
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 84138
+Object is Rectangle
+
+
+
+2023-January16-17:29:24
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 67906
+Object is Rectangle
+Reverse nu : 400
+Calculation time : 14.0727[s]
+Output to 2023-January16-17:29:24.csv
+
+
+
+2023-January16-17:31:44
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 11718
+Object is Rectangle
+
+
+
+2023-January16-17:35:32
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 81615
+Object is Rectangle
+
+
+
+2023-January16-18:00:57
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 8969
+Object is Rectangle
+
+
+
+2023-January16-18:01:09
+--Reverse RRT exploring--
+initial robot state : [21, 0, 0, 0, 0, 0]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [0,200,90]
+Seed : 34121
+Object is Rectangle
+Reverse nu : 200
+Calculation time : 236.675[s]
+Output to 2023-January16-18:00:57.csv
+
+
+
+2023-January16-18:21:08
+
+
+
+2023-January16-18:21:11
+--Task setting--
+
+
+
+2023-January16-18:22:06
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [25.92, -25.34, -1.39, 21.81, -21.78, -6.9]
+finish  robot state : [21, -3.51, -28.2, 12.2, -10, -9.66]
+object goal state : [-20,200,90]
+Seed : 93174
+Object is Rectangle
+Calculation time : 0.255899[s]
+Output to 2023-January16-18:22:06.csv
+
+
+
+2023-January16-18:22:50
+--Task setting--
+
+
+
+2023-January16-18:23:44
+Forward epsilon : 20
+--Forward RRT exploring--
+initial robot state : [25.92, -25.34, -1.39, 21.81, -21.78, -6.9]
+finish  robot state : [21, -3.51, -8.2, 12.2, -10, -9.66]
+object goal state : [-20,200,90]
+Seed : 70791
+Object is Rectangle
+Calculation time : 69.0498[s]
+Output to 2023-January16-18:23:44.csv
+
+
+
+2023-January17-01:02:47
+--Task setting--
+
+
+
+2023-January17-01:03:30
+Forward epsilon : 50
+--Forward RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [0, 0, 0, 0, 0, 0]
+object goal state : [-10,200,90]
+Seed : 23203
+Object is Rectangle
+Calculation time : 257.323[s]
+Output to 2023-January17-01:03:30.csv
+
+
+
+2023-January17-01:11:39
+--Task setting--
+
+
+
+2023-January17-01:12:11
+Forward epsilon : 30
+--Forward RRT exploring--
+initial robot state : [25, -30, -75, 30, -30, -20]
+finish  robot state : [0, 0, 0, 0, 0, 0]
+object goal state : [-10,200,90]
+Seed : 31240
+Object is Rectangle
+Calculation time : 15.3299[s]
+Output to 2023-January17-01:12:11.csv

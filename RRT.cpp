@@ -1,3 +1,4 @@
+
 #include<iostream>
 #include<chrono>
 #include<climits>
@@ -184,8 +185,6 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 		return NodeList();
 	}
 	auto start = std::chrono::system_clock::now();
-	std::string fn = "log.txt";
-	std::ofstream ofs(fn, std::ios::app);
 
 	while (1)
 	{
@@ -195,7 +194,6 @@ NodeList RRT::plan(Node ini, Node fin, State3D goal)
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
-		ofs << newnode << std::endl;
 
 		// Validation
 		if (!robot_update(newnode)){
@@ -291,111 +289,40 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 			it = cfree_obj.erase(it);
 		}
 		else{
-			++it;
+			if(continuous_check(prev_real_cfree[0], *it)){
+				++it;
+			}
+			else{
+				del_list.push_back(*it);
+				it = cfree_obj.erase(it);
+			}
 		}
 	}
 	controller->robot_update(newnode);
 	
-	std::string fn = "log.txt";
-	std::ofstream ofs(fn, std::ios::app);
-	for(int i=0; i<cfree_obj.size(); ++i){
-		ofs << cfree_obj[i] << std::endl;
-	}
-	ofs << std::endl;
-
-	bool flag = false;
-	if(flag){
-	CFreeICS ics(newnode);
-	std::vector<PointCloud> pcs = ics.extract();
-	}
-
 	if((int)cfree_obj.size() == 0)	return false;
 	else{
-
 		RRTNode validnode(newnode, cfree_obj, del_list);
 		tree.replace(validnode);
 		return true;
 	}
-
-//	if((int)cfree_obj.size() == 1){
-//		CFreeICS ics(newnode);
-//		std::vector<PointCloud> pcs = ics.extract();
-//		bool flag = false;
-//		for(int i=0; i<pcs.size(); ++i){
-//			if(cfree_obj[0].size() == pcs[i].size())	flag = true;
-//		}
-//		if(flag == false){
-//			assert(false);
-//		}
-		
-//		RRTNode validnode(newnode, cfree_obj[0]);
-//		tree.replace(validnode);
-//		return true;
-//	}
-//	else	return false;
 }
 
 
-//bool RevRRT::dfsconfig_valid(Node newnode)
-//{
-//	Controller* controller = Controller::get_instance();
-//
-//	std::vector<PointCloud> prev_cfree_obj = tree.back_parentRRTNode().get_cfree_obj();
-//	std::vector<PointCloud> prev_cfree_del = tree.back_parentRRTNode().get_cfree_del();
-//
-//	std::vector<PointCloud> cfree_obj;
-//	std::vector<PointCloud> del_list;
-//
-//	for(const auto& eo: prev_cfree_obj){
-//		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, newnode);
-//		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
-//			int flag = 0;
-//			for(const auto& ed: prev_cfree_del){
-//				if((*it).overlap(ed)){
-//					flag = 1;	break;
-//				}
-//			}
-//			if(flag == 1){
-//				del_list.push_back(*it);
-//				it = cfree_obj_tmp.erase(it);
-//			}
-//			else{
-//				++it;
-//			}
-//		}
-//
-//		for(const auto& e : cfree_obj_tmp){
-//			if(duplicate_check(e, cfree_obj))	continue;
-//			cfree_obj.push_back(e);
-//		}
-//	}
-//
-//	
-//	Node parent = tree.back_parentRRTNode().node;
-//	controller->robot_update(parent);
-//	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
-//		std::vector<PointCloud> prev_real_cfree = strategy->extract(*it, parent);
-//		if(prev_real_cfree.size() != 1){
-//			del_list.push_back(*it);
-//			it = cfree_obj.erase(it);
-//		}
-//		else{
-//			++it;
-//		}
-//	}
-//	controller->robot_update(newnode);
-//
-//	if((int)cfree_obj.size() == 0)	return false;
-//	else{
-//		RRTNode validnode(newnode, cfree_obj, del_list);
-//		tree.replace(validnode);
-//		return true;
-//	}
-//}
+bool RevRRT::continuous_check(PointCloud prev, PointCloud curr)
+{
+	double rate = 0.0;
+	const double continue_rate = 3.0;
 
+	if(prev.size() < curr.size()){
+		rate = (double)curr.size()/prev.size();
+	}
+	else{
+		rate = (double)prev.size()/curr.size();
+	}
 
-
-
+	return rate < continue_rate ? true : false;
+}
 
 Node RevRRT::sampling(Node Rand)
 {
@@ -448,7 +375,7 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 //    return GoalJudge::Goal;
 
 	static int maxi = 0;
-	int nu = 1000;
+	int nu = 200;
 	for(int i=0; i<(int)pcs.size(); ++i){
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
 		if(pcs[i].size() > nu){
@@ -478,8 +405,6 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 		return NodeList();
 	}
 	
-	std::string fn = "log.txt";
-	std::ofstream ofs(fn, std::ios::app);
 	while(1)
 	{
 		static int i = 0;	++i;
@@ -488,7 +413,6 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 		// Random sampling and format
 		Node Rand = generate_newnode();
 		Node newnode = sampling(Rand);
-		ofs << newnode << std::endl;
 
 		// Validation
 		if(!robot_update(newnode)){
@@ -508,24 +432,19 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	NodeList path = tree.generate_path();
 	path.reverse();
 
-	ofs << std::endl << std::endl << "Debug time!" << std::endl;
+	std::cout << "Debug time!\n";
 	PointCloud pre_cfo = tree.back_RRTNode().get_cfree_obj()[0];
 	for(int i=1; i<path.size(); ++i){
 		Node check = path.get(i);
 		std::cout << check << std::endl;
-		ofs << check << std::endl;
 		if(!robot_update(check))	assert(false);
 		
 		DfsCFO dfs;
 		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, check);
-		for(int i=0; i<cfo_now.size(); ++i){
-			ofs << cfo_now[i] << std::endl;
-		}
-		ofs << std::endl;
 		if((int)cfo_now.size() != 1)	assert(false);
-
 		pre_cfo = cfo_now[0];
 	}
+
 	return path;
 }
 
@@ -693,63 +612,6 @@ bool RRTConnect::caging_validation_gconf(Node newnode)
 	}
 }
 
-//bool RRTConnect::caging_validation_gconf(Node node)
-//{
-//	Controller* controller = Controller::get_instance();
-//
-//	std::vector<PointCloud> prev_cfree_obj = g_tree.back_parentRRTNode().get_cfree_obj();
-//	std::vector<PointCloud> prev_cfree_del = g_tree.back_parentRRTNode().get_cfree_del();
-//
-//	std::vector<PointCloud> cfree_obj;
-//	std::vector<PointCloud> del_list;
-//
-//	for(const auto& eo: prev_cfree_obj){
-//		std::vector<PointCloud> cfree_obj_tmp = strategy->extract(eo, node);
-//		for(auto it = cfree_obj_tmp.begin(); it != cfree_obj_tmp.end(); ){
-//			int flag = 0;
-//			for(const auto& ed: prev_cfree_del){
-//				if((*it).overlap(ed)){
-//					flag = 1;	break;
-//				}
-//			}
-//			if(flag == 1){
-//				del_list.push_back(*it);
-//				it = cfree_obj_tmp.erase(it);
-//			}
-//			else{
-//				++it;
-//			}
-//		}
-//
-//		for(const auto& e : cfree_obj_tmp){
-//			if(duplicate_check(e, cfree_obj))	continue;
-//			cfree_obj.push_back(e);
-//		}
-//	}
-//
-//	
-//	Node parent = g_tree.back_parentRRTNode().node;
-//	controller->robot_update(parent);
-//	for(auto it = cfree_obj.begin(); it != cfree_obj.end(); ){
-//		std::vector<PointCloud> prev_real_cfree = strategy->extract(*it, parent);
-//		if(prev_real_cfree.size() != 1){
-//			del_list.push_back(*it);
-//			it = cfree_obj.erase(it);
-//		}
-//		else{
-//			++it;
-//		}
-//	}
-//	controller->robot_update(node);
-//
-//	if((int)cfree_obj.size() == 0)	return false;
-//	else{
-//		RRTNode validnode(node, cfree_obj, del_list);
-//		g_tree.replace(validnode);
-//		return true;
-//	}
-//}
-
 
 GoalJudge RRTConnect::goal_sconf(State3D goal)
 {
@@ -781,36 +643,6 @@ GoalJudge RRTConnect::goal_sconf(State3D goal)
 
 	return GoalJudge::SGoal;
 }
-
-
-//GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
-//{
-//	double dist = bef.distance(aft);
-//	if(dist > 1.0)	return GoalJudge::NotGoal;
-//
-//	std::vector<PointCloud> bef_cfree = bef.get_cfree_obj();
-//	std::vector<PointCloud> aft_cfree = aft.get_cfree_obj();
-//	std::vector<PointCloud> aft_cdel  = aft.get_cfree_del();
-//
-//	for(const auto& bfree : bef_cfree){
-//		for(const auto& adel : aft_cdel){
-//			bool tof = bfree.overlap(adel);
-//			if(tof)	return GoalJudge::NotGoal;
-//		}
-//	}
-//
-//	for(const auto& bfree: bef_cfree){
-//		for(const auto& afree: aft_cfree){
-//			bool tof = bfree.overlap(afree);
-//			if(tof){
-//				std::cout << "pre: " << bef.getNode() << "  aft: " << aft.getNode() << std::endl;
-//				return GoalJudge::Connect;
-//			}
-//		}
-//	}
-//
-//	return GoalJudge::NotGoal;
-//}
 
 
 GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)

@@ -11,6 +11,7 @@ private:
 
 public:
 	void run();
+	//void get();
 	void space_config(int x, int y, int th);
 };
 
