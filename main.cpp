@@ -107,8 +107,8 @@ int main(int argc, char* argv[])
 	}
 
 	else if(i == 9){
-		task.space_config(5, 5, 3);
-		Node fin(12, -15, -25, 5, 30, -90);
+		//task.space_config(5, 5, 3);
+		Node fin(38.9, -57.3, 0, 18.5, 18.4, -90);
 
 		PSO opti;
 		opti.optimize(fin);

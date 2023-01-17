@@ -39,8 +39,8 @@ struct Node
 	double& operator [](int dof) { return node[dof]; }
 	Node operator+(const Node& other)	const;
 	Node operator-(const Node& other)	const;
-	Node operator*(int r)	const;
-	friend Node operator*(int r, const Node& other);
+	Node operator*(double r)	const;
+	friend Node operator*(double r, const Node& other);
 	double norm(const Node& other);
 };
 

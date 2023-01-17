@@ -22,8 +22,8 @@ void Triangle::update(State3D pos)
 	double alpha = std::acos(e1/(2*this->radius));
 	double beta = std::acos(e3/(2*this->radius));
 
-	Point2D refPoint(pos.x - 0.5*this->radius*cos(alpha + radAngle),
-					 pos.y - 0.5*this->radius*sin(alpha + radAngle));
+	Point2D refPoint(pos.x - this->radius*cos(alpha + radAngle),
+					 pos.y - this->radius*sin(alpha + radAngle));
 	Point2D p2(refPoint.x + e1*cos(radAngle), refPoint.y + e1*sin(radAngle));
 	Point2D p3(refPoint.x + e3*cos(radAngle + alpha + beta),
 			   refPoint.y + e3*sin(radAngle + alpha + beta));

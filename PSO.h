@@ -32,8 +32,8 @@ public:
 	}
 
 	PSO()
-		:repeat_times(100),
-		 particle_nums(50)
+		:repeat_times(200),
+		 particle_nums(5)
 	{}
 
 	std::vector<double> optimize(Node ini)
@@ -62,6 +62,8 @@ public:
 			for(int n=0; n<Node::dof; ++n){
 				double random = (double)rand()/RAND_MAX;
 				double tmpangle = ini.get_element(n) + diffusion_width*random - (diffusion_width/2);
+				if(tmpangle>90)		tmpangle=90;
+				if(tmpangle<-90)	tmpangle=-90;
 				tmpnode.push_back(tmpangle);
 			}
 			assert(tmpnode.size() == 6);
@@ -94,15 +96,19 @@ public:
 
 	void update_personal()
 	{
-		double r1 = (double)rand()/RAND_MAX;
-		double r2 = (double)rand()/RAND_MAX;
-		const double w=0.05, c1=0.1, c2 = 0.2;
+		const double w=0.5, c1=0.5, c2 = 1.5;
 
 		for(int i=0; i<particles.size(); ++i){
+			double r1 = (double)rand()/RAND_MAX;
+			double r2 = (double)rand()/RAND_MAX;
 			velocity[i] = velocity[i] * w +
 				r1 * c1 * (personal_best[i] - particles[i]) + 
 				r2 * c2 * (global_best - particles[i]);
 			particles[i] = particles[i] + velocity[i];
+			for(int n=0; n<Node::dof; ++n){
+				if(particles[i][n]>90)	particles[i][n] = 90;
+				if(particles[i][n]<-90)	particles[i][n] = -90;
+			}
 
 			double tmpscore = caging_func(particles[i]);
 			if(tmpscore < personal_score[i]){

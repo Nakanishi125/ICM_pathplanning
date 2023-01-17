@@ -52,7 +52,7 @@ double caging_func(Node node)
         if (xtmp < xmin) xmin = xtmp;
         if (xtmp > xmax) xmax = xtmp;
 	    int delta_x = (xmax - xmin) / 2;
-	    max_dist = std::sqrt(max_dist * max_dist + delta_x * delta_x);
+	    dist = std::sqrt(dist * dist + delta_x * delta_x);
         if (max_dist < dist)   max_dist = dist;
 	}
 

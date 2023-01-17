@@ -144,13 +144,13 @@ Node Node::operator-(const Node& other)	const
 			    node[5] - other.node[5]);
 }
 
-Node Node::operator*(int r)	const
+Node Node::operator*(double r)	const
 {
 	return Node(r*node[0], r*node[1], r*node[2],
 			    r*node[3], r*node[4], r*node[5]);
 }
 
-Node operator*(int r, const Node& other)
+Node operator*(double r, const Node& other)
 {
 	return Node(r*other.node[0], r*other.node[1], r*other.node[2],
 			    r*other.node[3], r*other.node[4], r*other.node[5]);
