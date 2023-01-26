@@ -30,7 +30,7 @@ bool RRT::initialize(Node ini)
 	print_ICSs(init_CFree);
 
 	std::cout << "Select the cluster:";
-	int index = -1;
+	int index = 0;
 	std::cin >> index;
 	assert(0 <= index && index < (int)init_CFree.size());
 	
@@ -171,7 +171,7 @@ RRT::RRT()
 	:tree(), garound(), strategy(new DfsCFO()), 
   	threshold(read_threshold())
 {
-	std::ofstream log("icm.log", std::ios::app);
+	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	log << "Forward epsilon : " << threshold << std::endl;
 }
 
@@ -375,11 +375,11 @@ GoalJudge RevRRT::goal_judge(std::vector<PointCloud> pcs)
 //    return GoalJudge::Goal;
 
 	static int maxi = 0;
-	int nu = 200;
+	int nu = 1000;
 	for(int i=0; i<(int)pcs.size(); ++i){
 		if(maxi < pcs[i].size())	maxi = pcs[i].size();
 		if(pcs[i].size() > nu){
-			std::ofstream log("icm.log", std::ios::app);
+			std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 			log << "Reverse nu : " << nu << std::endl;
 			std::cout << "num: " << pcs[i].size() << std::endl;
 
@@ -407,6 +407,8 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	
 	while(1)
 	{
+		auto start = std::chrono::system_clock::now();
+
 		static int i = 0;	++i;
 		//if(i>200000)	exit(5963);
 		
@@ -522,13 +524,13 @@ bool RRTConnect::gconf_update()
 GoalJudge RRTConnect::sconf_goaljudge(State3D goal, RRTNode bef, RRTNode aft)
 {
 	if(goal_sconf(goal) == GoalJudge::SGoal){
-		std::ofstream log("icm.log", std::ios::app);
+		std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 		log << "Forward Goal\n";
 		std::cout << "Start conf reached to the goal" << std::endl;
 		return GoalJudge::SGoal;
 	}
 	if(goal_connect(bef, aft) == GoalJudge::Connect){
-		std::ofstream log("icm.log", std::ios::app);
+		std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 		log << "Connect Goal\n";
 		std::cout << "Connect goal!" << std::endl;
 		return GoalJudge::Connect;
@@ -541,13 +543,13 @@ GoalJudge RRTConnect::sconf_goaljudge(State3D goal, RRTNode bef, RRTNode aft)
 GoalJudge RRTConnect::gconf_goaljudge(std::vector<PointCloud> cfo, RRTNode bef, RRTNode aft)
 {
 	if(goal_gconf(cfo) == GoalJudge::GGoal){
-		std::ofstream log("icm.log", std::ios::app);
+		std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 		log << "Reverse Goal\n";
 		std::cout << "Goal conf reached to desire start condition." << std::endl;
 		return GoalJudge::GGoal;
 	}
 	if(goal_connect(bef, aft) == GoalJudge::Connect){
-		std::ofstream log("icm.log", std::ios::app);
+		std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 		log << "Connect Goal\n";
 		std::cout << "Connect goal." << std::endl;
 		return GoalJudge::Connect;
@@ -718,7 +720,7 @@ GoalJudge RRTConnect::goal_gconf(std::vector<PointCloud> cfo)
 	for(int i=0; i<(int)cfo.size(); ++i){
 		if(maxi < cfo[i].size())	maxi = cfo[i].size();
 		if(cfo[i].size() > nu){
-			std::ofstream log("icm.log", std::ios::app);
+			std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 			log << "Reverse nu : " << nu << std::endl;
 			return GoalJudge::GGoal;
 		}
@@ -801,7 +803,7 @@ NodeList RRTConnect::path_concat(int sindex, int gindex)
 RRTConnect::RRTConnect()
 	:s_tree(), g_tree(), strategy(new DfsCFO()), s_threshold(read_threshold())
 {
-	std::ofstream log("icm.log", std::ios::app);
+	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	log << "Forward epsilon : " << s_threshold << std::endl;
 }
 
@@ -903,7 +905,7 @@ NodeList RRTConnect::plan(Node ini, Node fin, State3D goal)
 
 void rand_init()
 {
-	std::ofstream log("icm.log", std::ios::app);
+	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	auto seed = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count() % 100000;
 	log << "Seed : " << seed << std::endl;
 
@@ -947,6 +949,17 @@ bool contain_yth(PointCloud pc, State3D goal)
 {
     for (int i = 0; i < pc.size(); ++i) 
     if (pc.get(i).y == goal.y && pc.get(i).th == goal.th)    return true;
+   
+    return false;
+}
+
+
+bool contain_xyth(PointCloud pc, State3D goal)
+{
+    for (int i = 0; i < pc.size(); ++i) 
+    if (pc.get(i).x == goal.x && 
+		pc.get(i).y == goal.y && 
+		pc.get(i).th == goal.th)    return true;
    
     return false;
 }

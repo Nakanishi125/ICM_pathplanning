@@ -14,7 +14,7 @@ Controller* Controller::instance = nullptr;
 
 Shape* Controller::shape_create()
 {
-	std::ofstream log("icm.log", std::ios::app);
+	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	bp::ptree pt;
 	read_ini("config/ObjectParameter.ini", pt);
 

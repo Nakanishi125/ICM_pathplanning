@@ -33,7 +33,7 @@ std::string get_time_now()
 
 int main(int argc, char* argv[])
 {
-	std::ofstream log("icm.log", std::ios::app);
+	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	std::string fn =  get_time_now();
 	log << "\n\n\n" << fn << std::endl;
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 	std::cout << "Optimization                -> 9" << std::endl;
 
 
-    int i = 0;
+    int i = 2;
     std::cout << ">";   std::cin >> i;
 	assert(i > 0 && i <= 9);
 
@@ -92,14 +92,23 @@ int main(int argc, char* argv[])
 
 	else if(i == 7){
 		log << "--Calculate C_free_ICS--" << std::endl;
-		Node node(12, -15, -25, 5, 30, -90);
+		Node node(34.338, -49.249, -51.9, 29.55, -46.73, -38.71);
 		CFreeICS ics(node);
 		std::vector<PointCloud> cics = ics.extract();
 		for(int i=0; i<cics.size(); ++i)	std::cout << cics[i] << std::endl;
 	}
 
 	else if(i == 8){
-		Node fin(44.7, -6.7, -1.8, -17.9, 38, -50);
+//		task.space_config(5, 5, 3);
+		std::vector<double> fintmp;
+		for(int i=0; i<6; ++i){
+			double tmp;	
+			std::cout << "Joint " << i+1 << ": ";
+			std::cin >> tmp;
+			fintmp.push_back(tmp);
+		}
+		Node fin(fintmp);
+//		Node fin(18.99, -29.97, -40.98, 30.71, -30.30, -84.77);
 		FormClosure fc(fin);
 		fc.close();
 		Node fcfin = fc.get_fcangle();
@@ -108,7 +117,7 @@ int main(int argc, char* argv[])
 
 	else if(i == 9){
 		//task.space_config(5, 5, 3);
-		Node fin(38.9, -57.3, 0, 18.5, 18.4, -90);
+		Node fin(50,-60,-20,10, -10, -90);
 
 		PSO opti;
 		opti.optimize(fin);

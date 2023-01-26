@@ -22,6 +22,8 @@ public:
 
 	void robot_update(Node newnode);
 	void shape_update(State3D st);
+	Robot* get_robot(){return robot;}
+	Shape* get_shape(){return shape;}
 
 // Below 4 functions can be used 
 // when robot or shape has already updated properly

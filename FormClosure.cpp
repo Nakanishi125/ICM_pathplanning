@@ -242,8 +242,8 @@ void FormClosure::close()
 
 	int gx = x_list[index];
 	goal.x = gx;
-	
-	double dobj = fc_eval(cfree_obj); 
+
+	double dobj = fc_eval(cfree_obj);
 	std::cout << "Before form closure: " << dobj << std::endl;
 	delete ics;
 
@@ -251,6 +251,9 @@ void FormClosure::close()
 	std::vector<State3D> prev1 = { goal };
 	PointCloud pc(prev1);
 	controller->shape_update(goal);
+
+	Visual::rs_vis(controller->get_robot(), controller->get_shape());
+	//int i=0;	std::cin >> i;
 
 	simple_narrow(begin_left);
 	Node fcang_left = fcang;
@@ -268,6 +271,10 @@ void FormClosure::close()
 	else{
 		lcobj = fc_eval(cfolr[0]);
 	}
+
+	controller->shape_update(goal);
+	Visual::rs_vis(controller->get_robot(), controller->get_shape());
+	//std::cin >> i;
 
 	// moving right hand first, next left hand
 	init();
@@ -289,8 +296,12 @@ void FormClosure::close()
 		rcobj = fc_eval(cforl[0]);
 	}
 
-	std::cout << "Left start: " << lcobj << "  ";
-	std::cout << "Right start: " << rcobj << std::endl;
+	controller->shape_update(goal);
+	Visual::rs_vis(controller->get_robot(), controller->get_shape());
+	//std::cin >> i;
+
+	std::cout << "Left start: " << fcang_left << " -> " << lcobj << std::endl;
+	std::cout << "Right start: " << fcang_right << " -> " << rcobj << std::endl;
 	if (lcobj > rcobj) {
 		fcang = fcang_right;
 	}

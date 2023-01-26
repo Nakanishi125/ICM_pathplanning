@@ -107,6 +107,7 @@ Node generate_newnode();
 void print_ICSs(std::vector<PointCloud> pcs);
 double calc_dth2(double th, double goalth);
 double calc_dist(State3D st, State3D goal);
+bool contain_xyth(PointCloud pc, State3D goal);
 bool contain_yth(PointCloud pc, State3D goal);
 int read_threshold();
 bool duplicate_check(PointCloud subject, std::vector<PointCloud> db);

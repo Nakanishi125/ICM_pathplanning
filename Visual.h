@@ -27,7 +27,7 @@ public:
 
 	static void rs_vis(Robot* robot, Shape* shape)
 	{
-		std::string fn = "C:/Users/nakanishi/Desktop/visualize.csv";
+		std::string fn = "../visualize.csv";
 		std::ofstream ofs(fn);
 
 		for (int i = 0; i < 8; ++i) {
