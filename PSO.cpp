@@ -19,7 +19,7 @@ double caging_func(Node node)
 	std::vector<PointCloud> cfics = ics.extract();
 	if(cfics.size() == 0)	return 1000;
 	std::vector<PointCloud> cfree_objs;
-	for(int i=0; i<cfics.size(); ++i){
+	for(int i=0; i<(int)cfics.size(); ++i){
 		for(int j=0; j<cfics[i].size(); ++j){
 			if(cfics[i].get(j).y == goal.y &&
 			   cfics[i].get(j).th == goal.th){

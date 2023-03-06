@@ -14,13 +14,14 @@ PathSmooth::PathSmooth(NodeList path)
 
 NodeList PathSmooth::smooth()
 {
-	Controller* controller = Controller::get_instance();
 	NodeList opt_path = orig_path;
 
 	Node ini = orig_path[0];
 	CFreeICS ics(ini);
 
-	for(int i=0; i<6;++i)	std::cout << ini[i] << ", "; std::cout << std::endl;
+	for(int i=0; i<6;++i){
+		std::cout << ini[i] << ", "; std::cout << std::endl;
+	}
 	std::vector<PointCloud> init_CFree = ics.extract();
 	int num = 0;
 	for (const auto& cls : init_CFree) {
@@ -40,7 +41,7 @@ NodeList PathSmooth::smooth()
 	assert(0 <= index && index < (int)init_CFree.size());
 
 	int cnt = 0, iters_num = 10000;
-	double tolerance = 0.1;
+//	double tolerance = 0.1;
 	double error = 1.0;	// All value is OK except the value lower than 0.1
 	
 //	while(error > tolerance || cnt < iters_num){
@@ -57,9 +58,13 @@ NodeList PathSmooth::smooth()
 				if(opt_path[i][n] < -90)	opt_path[i][n] = -90;
 			}
 			std::cout << "before path: ";
-			for(int elm=0; elm<Node::dof; ++elm)	std::cout << pre_path[i][elm] << ", ";	std::cout << std::endl;
+			for(int elm=0; elm<Node::dof; ++elm){
+				std::cout << pre_path[i][elm] << ", ";	std::cout << std::endl;
+			}
 			std::cout << "after  path: ";
-			for(int elm=0; elm<Node::dof; ++elm)	std::cout << opt_path[i][elm] << ", ";	std::cout << std::endl;
+			for(int elm=0; elm<Node::dof; ++elm){
+				std::cout << opt_path[i][elm] << ", ";	std::cout << std::endl;
+			}
 			error += opt_path[i].norm(pre_path[i]);
 
 			if(!robot_update(opt_path[i])){
@@ -138,7 +143,6 @@ NodeList csv_to_nodelist(std::string fn)
 
 bool PathSmooth::debug()
 {
-	Controller* controller = Controller::get_instance();
 	std::string fn = "../icmlog/debug.txt";
 	std::ofstream ofs(fn, std::ios::app);
 
@@ -175,7 +179,7 @@ bool PathSmooth::debug()
 
 		DfsCFO dfs;
 		std::vector<PointCloud> cfo_now = dfs.extract(pre_cfo, orig_path[i]);
-		for(int i=0; i<cfo_now.size(); ++i){
+		for(int i=0; i<(int)cfo_now.size(); ++i){
 			ofs << cfo_now[i] << std::endl;
 		}
 

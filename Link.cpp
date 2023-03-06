@@ -3,7 +3,7 @@
 
 
 Link::Link(RecSize r, Mat22<int> coord, Point2D btm)
-	:vertices(), rect(r), coordination(coord), bottom(btm)
+	:rect(r), coordination(coord), bottom(btm), vertices() 
 {
 	update(0, bottom);
 }

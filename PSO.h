@@ -32,8 +32,8 @@ public:
 	}
 
 	PSO()
-		:repeat_times(200),
-		 particle_nums(5)
+		:repeat_times(400),
+		 particle_nums(400)
 	{}
 
 	std::vector<double> optimize(Node ini)
@@ -56,7 +56,7 @@ public:
 	{
 		std::srand(time(NULL));
 
-		const double diffusion_width = 10;
+		double diffusion_width = 10;
 		for(int i=0; i<particle_nums; ++i){
 			std::vector<double> tmpnode;
 			for(int n=0; n<Node::dof; ++n){
@@ -73,14 +73,14 @@ public:
 		velocity.resize(particle_nums);
 
 		personal_best = particles;
-		for(int i=0; i<personal_best.size(); ++i){
+		for(int i=0; i<(int)personal_best.size(); ++i){
 			double tmpscore = caging_func(personal_best[i]);
 			personal_score.push_back(tmpscore);
 			std::cout << personal_best[i] << " : " << tmpscore << std::endl;
 		}
 	
 		double tmpmin = DBL_MAX;	int global_index = 0;
-		for(int i=0; i<personal_score.size(); ++i){
+		for(int i=0; i<(int)personal_score.size(); ++i){
 			if(tmpmin > personal_score[i]){
 				tmpmin = personal_score[i];
 				global_index = i;
@@ -89,16 +89,19 @@ public:
 		global_best = personal_best[global_index];
 		global_score = tmpmin;
 
-		std::cout << global_best << " : " << global_score << std::endl;
+		std::cout << "\nglobal best -> " << global_best << " : " << global_score << std::endl << std::endl;
 	}
 
 
 
 	void update_personal()
 	{
-		const double w=0.5, c1=0.5, c2 = 1.5;
+		static int cnt = 0;	++cnt;
+		const double wh = 1.2, wl = 0.3;
+		const double c1 = 0.7, c2 = 0.2;
+		double w = wh - (wh - wl)*cnt/repeat_times; 
 
-		for(int i=0; i<particles.size(); ++i){
+		for(int i=0; i<(int)particles.size(); ++i){
 			double r1 = (double)rand()/RAND_MAX;
 			double r2 = (double)rand()/RAND_MAX;
 			velocity[i] = velocity[i] * w +
@@ -115,19 +118,20 @@ public:
 				personal_score[i] = tmpscore;
 				personal_best[i] = particles[i];
 			}
+			std::cout << personal_best[i] << " : " << tmpscore << std::endl;
 		}
 	}
 
 
 	void update_global()
 	{
-		for(int i=0; i<personal_best.size(); ++i){
+		for(int i=0; i<(int)personal_best.size(); ++i){
 			if(personal_score[i] < global_score){
 				global_score = personal_score[i];
 				global_best = personal_best[i];
 			}
 		}
-		std::cout << global_best << " : " << global_score << std::endl;
+		std::cout << "\nglobal best -> " << global_best << " : " << global_score << std::endl << std::endl;
 	}
 
 };

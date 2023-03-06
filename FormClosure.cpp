@@ -11,7 +11,7 @@
 #include "Visual.h"
 
 FormClosure::FormClosure(Node _ini)
-	:ini(_ini), fcang(_ini), goal()
+	:ini(_ini), goal(), fcang(_ini)
 {
 	goal = read_goal();
 }
@@ -49,7 +49,7 @@ void FormClosure::simple_narrow(std::vector<int> order)
 {
 	assert((int)order.size() == 6);
 	for (int i = 0; i < (int)order.size(); ++i)	assert(i >= 0 && i < 6);
-	const double mov_range = 0.1; 
+	//const double mov_range = 0.1; 
 
 	int next = 0;
 	for (int i = 0; i < HalfNode::dof; ++i) {
@@ -215,7 +215,7 @@ void FormClosure::close()
 	std::vector<PointCloud> cfree_ics = ics->extract();
 
 	std::vector<PointCloud> cfree_objs;
-	for(int i=0; i<cfree_ics.size(); ++i){
+	for(int i=0; i<(int)cfree_ics.size(); ++i){
 		for(int j=0; j<cfree_ics[i].size(); ++j){
 			if(cfree_ics[i].get(j).y == goal.y &&
 			   cfree_ics[i].get(j).th == goal.th){
@@ -244,7 +244,9 @@ void FormClosure::close()
 	goal.x = gx;
 
 	double dobj = fc_eval(cfree_obj);
-	std::cout << "Before form closure: " << dobj << std::endl;
+	std::cout << "Before form closure: " 
+		      << ini << " -> "  
+			  << dobj << std::endl;
 	delete ics;
 
 	// moving left hand first, after that right hand

@@ -23,7 +23,7 @@ CSpaceConfig::CSpaceConfig()
 {
 	bp::ptree pt;
 	read_ini("config/SpaceConfig.ini", pt);
-	int x, y, th;
+	int x, y;
 	boost::optional<int> carrier = pt.get_optional<int>("top.x");
 	x = carrier.get();
 	carrier = pt.get_optional<int>("top.y");
@@ -38,9 +38,10 @@ CSpaceConfig::CSpaceConfig()
 
 int read_symangle()
 {
-	bp::ptree pt;
+	bp::ptree pb, pt;
+	read_ini("config/ProblemDefine.ini", pb);
 	read_ini("config/ObjectParameter.ini", pt);
-	boost::optional<int> carrier = pt.get_optional<int>("target.shape");
+	boost::optional<int> carrier = pb.get_optional<int>("object.shape");
 	int flag = carrier.get();
 	if(flag == 1){
 		carrier = pt.get_optional<int>("Rectangle.symmetry");

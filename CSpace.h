@@ -72,7 +72,7 @@ struct CSpace
 
 	void init()
 	{
-		for(int i=0; i<elm.size(); ++i){
+		for(int i=0; i<(int)elm.size(); ++i){
 			elm[i].mk = false;
 		}
 	}

@@ -11,6 +11,13 @@ Wall::Wall()
 	Point2D w4(300, -5.001);
 	Square wall1(w1, w2, w3, w4);
 	wall.push(wall1);
+
+//	Point2D w5(-300, 415.001);
+//	Point2D w6(-300, 420.001);
+//	Point2D w7(300, 420.001);
+//	Point2D w8(300, 415.001);
+//	Square wall2(w5, w6, w7, w8);
+//	wall.push(wall2);
 }
 
 

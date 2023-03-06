@@ -7,6 +7,7 @@
 #include "pathsmooth.h"
 #include "FormClosure.h"
 #include "PSO.h"
+#include "TShape.h"
 
 #include <cassert>
 #include <ctime>
@@ -17,7 +18,7 @@
 #include <fstream>
 
 
-#pragma warning(disable : 4996)
+//#pragma warning(disable : 4996)
 
 std::string get_time_now()
 {
@@ -36,11 +37,10 @@ int main(int argc, char* argv[])
 	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	std::string fn =  get_time_now();
 	log << "\n\n\n" << fn << std::endl;
-
 	TaskSet task;
-	task.space_config(10, 10, 5);
 
     std::cout << "Welcome to Sensorless ICM planner!\n";
+	std::cout << "----------------------------------------------\n";
     std::cout << "Setting                     -> 1" << std::endl;
     std::cout << "Generate Path(RRT)          -> 2" << std::endl;
     std::cout << "Generate Path(Reverse RRT)  -> 3" << std::endl;
@@ -50,16 +50,36 @@ int main(int argc, char* argv[])
 	std::cout << "Calc C_free_ICS             -> 7" << std::endl;
 	std::cout << "Form Closure                -> 8" << std::endl;
 	std::cout << "Optimization                -> 9" << std::endl;
+	std::cout << "----------------------------------------------\n";
 
-
-    int i = 2;
+    int i = 0;
     std::cout << ">";   std::cin >> i;
 	assert(i > 0 && i <= 9);
 
     if (i == 1) {
-		log << "--Task setting--" << std::endl;
+		log << "--Task Setting--" << std::endl;
         TaskSet setting;
-        setting.run();
+
+		int opt = 0;
+		std::cout << "-----------------------------------------\n";
+		std::cout << "Check current config         -> 1\n";	
+		std::cout << "Set the shape                -> 2\n";
+		std::cout << "Set the Robot angle config   -> 3\n";
+		std::cout << "Set the goal condition       -> 4\n";
+		std::cout << "Set the all config           -> 5\n\n";
+		std::cout << "Set the hand config          -> 6\n";
+		std::cout << "Set the discretized variable -> 7\n";
+		std::cout << "-----------------------------------------\n";
+		std::cout << ">";	std::cin >> opt;
+
+
+		if(opt == 1)		setting.check();
+		else if(opt == 2)	setting.set_shape();
+		else if(opt == 3)	setting.set_robotangle();
+		else if(opt == 4)	setting.set_goal();
+		else if(opt == 5)	setting.set_all();
+		else if(opt == 6)	setting.set_handtype();
+		else if(opt == 7)	setting.set_discretization();
     }
 
 	else if(i == 5){
@@ -78,7 +98,7 @@ int main(int argc, char* argv[])
 		log << "--Debug--" << std::endl;
 		std::string fn;
 		std::cin >> fn;
-		fn = "path/" + fn + ".csv";
+		fn = "../ICM_Log/path/" + fn + ".csv";
 		NodeList nl = csv_to_nodelist(fn);
 		PathSmooth* ps = new PathSmooth(nl);
 		bool valid = ps->debug();
@@ -92,32 +112,46 @@ int main(int argc, char* argv[])
 
 	else if(i == 7){
 		log << "--Calculate C_free_ICS--" << std::endl;
-		Node node(34.338, -49.249, -51.9, 29.55, -46.73, -38.71);
+//		task.space_config(5, 5, 1);
+		Node node(12.00000, -15.00000, -25.00000, 5.00000, 30.00000, -90.00000);
+
 		CFreeICS ics(node);
 		std::vector<PointCloud> cics = ics.extract();
-		for(int i=0; i<cics.size(); ++i)	std::cout << cics[i] << std::endl;
+		for(int i=0; i<(int)cics.size(); ++i){
+			std::cout << i << ":\n" << cics[i] << std::endl;
+		}
+
+		std::cout << "Select the cluster No." << std::endl;
+		std::cout << "-> ";
+		int cls = 0;	std::cin >> cls;
+		PointCloud pc = cics[cls];
+		std::ofstream ofs("../cluster.csv");
+		for(int i=0; i<pc.size(); ++i){
+			ofs << pc.get(i).x << "," << pc.get(i).y << "," << pc.get(i).th << std::endl;
+		}
+
 	}
 
 	else if(i == 8){
-//		task.space_config(5, 5, 3);
-		std::vector<double> fintmp;
-		for(int i=0; i<6; ++i){
-			double tmp;	
-			std::cout << "Joint " << i+1 << ": ";
-			std::cin >> tmp;
-			fintmp.push_back(tmp);
-		}
-		Node fin(fintmp);
-//		Node fin(18.99, -29.97, -40.98, 30.71, -30.30, -84.77);
+//		task.space_config(5, 5, 1);
+//		std::vector<double> fintmp;
+//		for(int i=0; i<6; ++i){
+//			double tmp;	
+//			std::cout << "Joint " << i+1 << ": ";
+//			std::cin >> tmp;
+//			fintmp.push_back(tmp);
+//		}
+//		Node fin(fintmp);
+		Node fin(34.338, -49.249, -51.9, 29.55, -46.73, -38.71);
 		FormClosure fc(fin);
 		fc.close();
 		Node fcfin = fc.get_fcangle();
-		std::cout << fcfin << std::endl;
+		std::cout << "Closed hand config : " << fcfin << std::endl;
 	}
 
 	else if(i == 9){
-		//task.space_config(5, 5, 3);
-		Node fin(50,-60,-20,10, -10, -90);
+		task.space_config(5, 5, 3);
+		Node fin(25.6, -62, -60, 31.8, -41.4, -90);
 
 		PSO opti;
 		opti.optimize(fin);

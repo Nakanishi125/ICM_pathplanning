@@ -123,10 +123,10 @@ GoalJudge RRT::goal_judge(State3D goal)
 
     std::cout << "max distance:" << max_dist << std::endl;
 
-    if (!contain_yth(pc, goal)) {
-        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
-        return GoalJudge::NotGoal;
-    }
+//    if (!contain_yth(pc, goal)) {
+//        std::cout << "epsilon is satisfied but doesn't contain goal state." << std::endl;
+//        return GoalJudge::NotGoal;
+//    }
     if (max_dist > threshold)    return GoalJudge::MiddleGoal;
     else                         return GoalJudge::Goal;
 
@@ -140,12 +140,12 @@ bool RRT::config_valid(Node newnode)
 
 	set_strategy(new DfsCFO());
 	std::vector<PointCloud> cfo = strategy->extract(tree.back_parentRRTNode().pc(), newnode);
-	for(int i=0; i<cfo.size(); ++i){
+	for(int i=0; i<(int)cfo.size(); ++i){
 		ofs << cfo[i] << std::endl;
 	}
 	set_strategy(new RasterCFO());
 	std::vector<PointCloud> cfo2 = strategy->extract(tree.back_parentRRTNode().pc(), newnode);
-	for(int i=0; i<cfo2.size(); ++i){
+	for(int i=0; i<(int)cfo2.size(); ++i){
 		ofs << cfo2[i] << std::endl;
 	}
 
@@ -233,7 +233,9 @@ bool RevRRT::initialize(Node fin)
 	tree.push_back(fin, origin);
 	CFreeICS ics(fin);
 
-	for(int i=0; i<6;++i)	std::cout << fin.get_element(i) << ", "; std::cout << std::endl;
+	for(int i=0; i<6;++i){
+		std::cout << fin.get_element(i) << ", ";
+	} std::cout << std::endl;
 	if (!robot_update(fin))	return false;
 
 	std::vector<PointCloud> fin_CFree = ics.extract();
@@ -269,7 +271,7 @@ bool RevRRT::dfsconfig_valid(Node newnode)
 		for(const auto& e : cfree_obj_tmp){
 			//if(duplicate_check(e, cfree_obj))	continue;
 			bool flag = false;
-			for(int i=0; i<cfree_obj.size(); ++i){
+			for(int i=0; i<(int)cfree_obj.size(); ++i){
 				if(cfree_obj[i].overlap(e)){	
 					flag = true;
 					break;
@@ -407,8 +409,6 @@ NodeList RevRRT::plan(Node ini, Node fin, State3D goal)
 	
 	while(1)
 	{
-		auto start = std::chrono::system_clock::now();
-
 		static int i = 0;	++i;
 		//if(i>200000)	exit(5963);
 		
@@ -652,7 +652,6 @@ GoalJudge RRTConnect::goal_connect(RRTNode bef, RRTNode aft)
 	double dist = bef.distance(aft);
 	if(dist > 1.0)	return GoalJudge::NotGoal;
 
-	Controller* controller = Controller::get_instance();
 	std::vector<PointCloud> bef_cfree = bef.get_cfree_obj();
 	std::vector<PointCloud> aft_cfree = aft.get_cfree_obj();
 	std::vector<PointCloud> overlap_cfree;
@@ -800,8 +799,11 @@ NodeList RRTConnect::path_concat(int sindex, int gindex)
 	return spath;
 }
 
+
 RRTConnect::RRTConnect()
-	:s_tree(), g_tree(), strategy(new DfsCFO()), s_threshold(read_threshold())
+	:s_tree(), g_tree(),
+	 s_threshold(read_threshold()),
+	 strategy(new DfsCFO())
 {
 	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	log << "Forward epsilon : " << s_threshold << std::endl;

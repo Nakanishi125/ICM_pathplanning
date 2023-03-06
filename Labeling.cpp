@@ -194,9 +194,6 @@ void Labeling::integrate()
 void Labeling::neighbor_visit(int x, int y, int th)
 {
 	int nowlabel = label[x][y][th];
-	int topx = numx;
-	int topy = numy;
-	int topth = numth;
 
 	if (nowlabel != 0) {
 		int clust = search_neighbors(x, y, th);

@@ -236,7 +236,7 @@ public:
 //	If 'st' is a part, return true
 	bool cdel_judge(State3D st)
 	{
-		for(int i=0; i<c_del.size(); ++i){
+		for(int i=0; i<(int)c_del.size(); ++i){
 			if(c_del[i].exist(st))	return true;
 		}
 		return false;

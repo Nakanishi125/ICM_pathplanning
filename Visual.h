@@ -11,7 +11,7 @@ class Visual
 public:
 	static void robot_vis(Robot* robot)
 	{
-		std::string fn = "C:/Users/nakanishi/Desktop/robo.csv";
+		std::string fn = "../robo.csv";
 		std::ofstream ofs(fn);
 
 		for (int i = 0; i < 8; ++i) {

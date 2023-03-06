@@ -126,7 +126,7 @@ RRTTree::RRTTree(Node ini, int origin)
 {
 	graph.push_back(RRTNode(ini));
 	nl.push_back(origin);
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 }
 
 
@@ -157,7 +157,7 @@ void RRTTree::push_back(Node targ, int oya)
 {
 	graph.push_back(RRTNode(targ));
 	nl.push_back(oya);
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 }
 
 
@@ -165,14 +165,14 @@ void RRTTree::push_back(RRTNode targ, int oya)
 {
 	graph.push_back(targ);
 	nl.push_back(oya);
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 }
 
 void RRTTree::replace(RRTNode targ)
 {
 	graph.pop_back();
 	graph.push_back(targ);
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 }
 
 
@@ -181,13 +181,13 @@ void RRTTree::pop_back()
 	assert(get_RRTNode(-1).get_cfree_obj().size() == 0);
 	graph.pop_back();
 	nl.pop_back();
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 }
 
 
 int RRTTree::size()
 {
-	assert(graph.size() == nl.size());
+	assert((int)graph.size() == nl.size());
 	return (int)graph.size();
 }
 

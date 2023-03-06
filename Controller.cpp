@@ -16,9 +16,9 @@ Shape* Controller::shape_create()
 {
 	std::ofstream log("../ICM_Log/icm.log", std::ios::app);
 	bp::ptree pt;
-	read_ini("config/ObjectParameter.ini", pt);
+	read_ini("config/ProblemDefine.ini", pt);
 
-	boost::optional<int> carrier = pt.get_optional<int>("target.shape");
+	boost::optional<int> carrier = pt.get_optional<int>("object.shape");
 	int sh = carrier.get();
 	if(sh == 1){
 		log << "Object is Rectangle\n";

@@ -8,11 +8,13 @@ namespace bp = boost::property_tree;
 
 
 Problem::Problem(Planner* solver)
-	:solver(solver), 
-	 initial(read_initial()), 
+	:initial(read_initial()), 
 	 finish(read_finish()),
-	 goal(read_goal()) 
-{}
+	 goal(read_goal()),
+	 solver(solver)
+{
+}
+
 
 NodeList Problem::pathplanning()
 {
