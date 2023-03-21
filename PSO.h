@@ -32,8 +32,8 @@ public:
 	}
 
 	PSO()
-		:repeat_times(400),
-		 particle_nums(400)
+		:repeat_times(200),
+		 particle_nums(100)
 	{}
 
 	std::vector<double> optimize(Node ini)
@@ -56,7 +56,7 @@ public:
 	{
 		std::srand(time(NULL));
 
-		double diffusion_width = 10;
+		double diffusion_width = 90;
 		for(int i=0; i<particle_nums; ++i){
 			std::vector<double> tmpnode;
 			for(int n=0; n<Node::dof; ++n){
@@ -118,7 +118,7 @@ public:
 				personal_score[i] = tmpscore;
 				personal_best[i] = particles[i];
 			}
-			std::cout << personal_best[i] << " : " << tmpscore << std::endl;
+			std::cout << i << ":" << personal_best[i] << " -> " << tmpscore << std::endl;
 		}
 	}
 

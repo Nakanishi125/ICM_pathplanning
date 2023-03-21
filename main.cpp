@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 	else if(i == 7){
 		log << "--Calculate C_free_ICS--" << std::endl;
 //		task.space_config(5, 5, 1);
-		Node node(12.00000, -15.00000, -25.00000, 5.00000, 30.00000, -90.00000);
+		Node node(21.2,-23.8,-84.6,18.88,-40.2,-13.922);
 
 		CFreeICS ics(node);
 		std::vector<PointCloud> cics = ics.extract();
@@ -150,8 +150,8 @@ int main(int argc, char* argv[])
 	}
 
 	else if(i == 9){
-		task.space_config(5, 5, 3);
-		Node fin(25.6, -62, -60, 31.8, -41.4, -90);
+//		task.space_config(5, 5, 3);
+		Node fin(0, 0, 0, 0, 0, 0);
 
 		PSO opti;
 		opti.optimize(fin);

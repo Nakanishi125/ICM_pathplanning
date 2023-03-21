@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt 
 
-calib = pd.read_csv('../calib.csv', header=None)
+calib = pd.read_csv('config/calib.csv', header=None)
 
-filename = input('Input filename: ')
-pp = pd.read_csv(filename, header=None)
+filename = input('Input filename (Put the file in ICM_Log/path ,(.csv) not required):')
+pp = pd.read_csv('../ICM_Log/path/'+filename+'.csv', header=None)
 
 for i in range(len(pp)):
     for j in range(6):
@@ -138,8 +138,8 @@ for i in range(len(pp)):
 
         pp.iloc[i, j] = anc_low + (anc_high - anc_low)*(tmp - low)/(high - low)
 
-output = input('Input output file name: ')
-pp.to_csv('../'+output, header=False, index=False)
+output = input('Input output file name (.csv not required):')
+pp.to_csv('../ICM_Log/path/'+output+'.csv', header=False, index=False)
 
 
 

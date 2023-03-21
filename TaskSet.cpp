@@ -84,32 +84,31 @@ void TaskSet::set_shape()
 	} while (shape <= 0 || shape > maxi);
 	problem.put("object.shape", shape);
 
-	double th_s1, th_s2, th_s3, th_s4, th_s5, th_s6;
-	std::cout << "Input initial state" << std::endl;
-	std::cout << "th1: ";	std::cin >> th_s1;
-	std::cout << "th2: ";	std::cin >> th_s2;
-	std::cout << "th3: ";	std::cin >> th_s3;
-	std::cout << "th4: ";	std::cin >> th_s4;
-	std::cout << "th5: ";	std::cin >> th_s5;
-	std::cout << "th6: ";	std::cin >> th_s6;
-	std::cout << std::endl;
+	boost::optional<double> th = problem.get_optional<double>("start.th1");
+	problem.put("start.th1", th.get());
+	th = problem.get_optional<double>("start.th2");
+	problem.put("start.th2", th.get());
+	th = problem.get_optional<double>("start.th3");
+	problem.put("start.th3", th.get());
+	th = problem.get_optional<double>("start.th4");
+	problem.put("start.th4", th.get());
+	th = problem.get_optional<double>("start.th5");
+	problem.put("start.th5", th.get());
+	th = problem.get_optional<double>("start.th6");
+	problem.put("start.th6", th.get());
 
-	double th_g1, th_g2, th_g3, th_g4, th_g5, th_g6;
-	std::cout << "Input final state" << std::endl;
-	std::cout << "th1: ";	std::cin >> th_g1;
-	std::cout << "th2: ";	std::cin >> th_g2;
-	std::cout << "th3: ";	std::cin >> th_g3;
-	std::cout << "th4: ";	std::cin >> th_g4;
-	std::cout << "th5: ";	std::cin >> th_g5;
-	std::cout << "th6: ";	std::cin >> th_g6;
-	std::cout << std::endl;
-
-	problem.put("start.th1", th_s1);	problem.put("start.th2", th_s2);
-	problem.put("start.th3", th_s3);	problem.put("start.th4", th_s4);
-	problem.put("start.th5", th_s5);	problem.put("start.th6", th_s6);
-	problem.put("finish.th1", th_g1);	problem.put("finish.th2", th_g2);
-	problem.put("finish.th3", th_g3);	problem.put("finish.th4", th_g4);
-	problem.put("finish.th5", th_g5);	problem.put("finish.th6", th_g6);
+	th = problem.get_optional<double>("finish.th1");
+	problem.put("finish.th1", th.get());
+	th = problem.get_optional<double>("finish.th2");
+	problem.put("finish.th2", th.get());
+	th = problem.get_optional<double>("finish.th3");
+	problem.put("finish.th3", th.get());
+	th = problem.get_optional<double>("finish.th4");
+	problem.put("finish.th4", th.get());
+	th = problem.get_optional<double>("finish.th5");
+	problem.put("finish.th5", th.get());
+	th = problem.get_optional<double>("finish.th6");
+	problem.put("finish.th6", th.get());
 
 	boost::optional<int> x, y, z;
 	x = problem.get_optional<int>("goal.coordx");
